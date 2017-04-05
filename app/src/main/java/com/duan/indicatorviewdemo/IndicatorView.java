@@ -153,7 +153,7 @@ public class IndicatorView extends View {
 
         final TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.IndicatorView, defStyleAttr, 0);
 
-        //默认动画为“吸干”
+        //默认动画为“挤扁”
         mIndicatorSwitchAnim = array.getInteger(R.styleable.IndicatorView_IndicatorSwitchAnimation, INDICATOR_SWITCH_ANIM_SQUEEZE);
 
         mTouchEnable = array.getBoolean(R.styleable.IndicatorView_touchEnable, true);

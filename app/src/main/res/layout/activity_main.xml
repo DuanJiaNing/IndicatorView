@@ -102,7 +102,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:text="使用默认的“吸干”动画" />
+        android:text="使用默认的“挤扁”动画" />
 
     <com.duan.indicatorviewdemo.IndicatorView
         android:layout_width="wrap_content"

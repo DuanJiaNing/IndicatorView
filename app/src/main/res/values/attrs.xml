@@ -22,7 +22,7 @@
 
     <attr name="IndicatorSwitchAnimation" format="integer"> <!--使用默认提供的动画-->
         <enum name="translation" value="1"/> <!--平移-->
-        <enum name="squeeze" value="2"/><!--"吸干"-->
+        <enum name="squeeze" value="2"/><!--"挤扁"-->
         <enum name="none" value="0"/> <!--不使用动画-->
     </attr>
 
