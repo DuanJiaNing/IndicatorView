@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="start"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.duan.indicatorviewdemo.MainActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="默认" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="代码动态指定属性+不可点击+不可拖拽" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:id="@+id/indicator1"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:dotNum="6"
+        app:dotSize="10dp"
+        app:indicatorSize="20dp"
+        app:lineHeight="1px"
+
+        app:lineWidth="50dp"
+        app:touchEnable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="不可点击+自定义指示点触摸动画" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:id="@+id/indicator2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp"
+        app:dotClickEnable="false"
+        app:dotNum="5"
+        app:dotSize="10dp"
+        app:indicatorPos="2"
+        app:indicatorSize="20dp"
+        app:lineColor="#000000"
+
+        app:lineHeight="2px"
+        app:lineWidth="60dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="线条不可见(线条长度仍需指定)+自定义指示点切换动画" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:id="@+id/indicator3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:dotNum="5"
+        app:dotSize="4dp"
+        app:indicatorPos="2"
+        app:indicatorSize="17dp"
+        app:lineVisible="false"
+        app:lineWidth="60dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="自定义指示点切换动画+监听点击事件+不可拖拽" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:id="@+id/indicator4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:indicatorDragEnable="false"
+        app:dotColor="#ff2828"
+        app:dotNum="5"
+        app:dotSize="5dp"
+        app:indicatorPos="2"
+        app:lineColor="#000"
+        app:indicatorSize="15dp"
+        app:lineWidth="60dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="使用默认的“吸干”动画" />
+
+    <com.duan.indicatorviewdemo.IndicatorView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:IndicatorSwitchAnimation="squeeze"
+        app:dotColor="#2d2b2b"
+        app:dotNum="4"
+        app:dotSize="10dp"
+        app:duration="800"
+        app:indicatorColor="#ff9500"
+        app:indicatorPos="1"
+
+        app:indicatorSize="25dp"
+        app:lineColor="#b3b3b3"
+        app:lineHeight="4dp"
+        app:lineWidth="85dp" />
+
+</LinearLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="lineColor" format="color" /> <!--线条颜色 -->
+    <attr name="lineVisible" format="boolean" /> <!--线条是否可见 -->
+    <attr name="lineWidth" format="dimension" /> <!--线条长度 -->
+    <attr name="lineHeight" format="dimension" /> <!--线条高度 -->
+
+    <attr name="dotSize" format="dimension" /> <!--小圆点大小 -->
+    <attr name="dotNum" format="integer"/> <!--小圆点个数 -->
+    <attr name="dotColor" format="color" /> <!--小圆点颜色 -->
+
+    <attr name="indicatorColor" format="color" /> <!--指示点颜色 -->
+    <attr name="indicatorSize" format="dimension" /> <!--指示点大小 -->
+    <attr name="indicatorPos" format="integer"/> <!--指示点位置 -->
+
+    <attr name="duration" format="integer"/> <!--两点间移动动画时间 -->
+
+    <attr name="dotClickEnable" format="boolean"/><!--小圆点点点击时是否把指示点移到点击的小圆点处，若置为false则只能通过setIndicatorPos()方法改变指示点位置-->
+    <attr name="indicatorDragEnable" format="boolean"/><!--指示点拖拽是否可用-->
+    <attr name="touchEnable" format="boolean"/><!--同时禁用小圆点点击和指示点拖拽-->
+
+    <attr name="IndicatorSwitchAnimation" format="integer"> <!--使用默认提供的动画-->
+        <enum name="translation" value="1"/> <!--平移-->
+        <enum name="squeeze" value="2"/><!--"吸干"-->
+        <enum name="none" value="0"/> <!--不使用动画-->
+    </attr>
+
+    <declare-styleable name="IndicatorView">
+        <attr name="dotColor" />
+        <attr name="dotSize" />
+        <attr name="dotNum" />
+        <attr name="lineColor" />
+        <attr name="lineVisible" />
+        <attr name="lineWidth" />
+        <attr name="lineHeight" />
+        <attr name="indicatorColor" />
+        <attr name="indicatorSize" />
+        <attr name="indicatorPos" />
+        <attr name="duration" />
+        <attr name="IndicatorSwitchAnimation"/>
+        <attr name="dotClickEnable"/>
+        <attr name="indicatorDragEnable"/>
+        <attr name="touchEnable"/>
+    </declare-styleable>
+
+</resources>
