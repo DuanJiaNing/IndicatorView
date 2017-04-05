@@ -329,7 +329,7 @@ public class IndicatorView extends View {
     }
 
     /**
-     * 小圆点触摸（挤压）动画
+     * 指示点触摸（挤压）动画
      */
     private void startPressAnimation() {
         if (mPressAnimator == null) {
