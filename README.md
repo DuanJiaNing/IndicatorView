@@ -30,7 +30,6 @@
 3. 通过代码自定义指示点间切换动画，指示点被触摸的反馈动画及点击事件监听的回调
 #### 四.用途：
 
-具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器](http://blog.csdn.net/aimeimeiTS/article/details/69370853)
 #### 五.如何使用
 可以在布局文件中直接使用：
 ``` xml
@@ -51,9 +50,11 @@
         app:lineHeight="4dp"
         app:lineWidth="85dp" />
 ```
+具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器](http://blog.csdn.net/aimeimeiTS/article/details/69370853)
 #### 六.版本变化
 
 #### 六.未来的开发计划
-
+- 添加**纵向视图**支持
+- 自定义指示点在各个位置的颜色
 
 #### 六.Q&A
