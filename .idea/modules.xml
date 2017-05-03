@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/IndicatorViewDemao.iml" filepath="$PROJECT_DIR$/IndicatorViewDemao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IndicatorViewDemo.iml" filepath="$PROJECT_DIR$/IndicatorViewDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
