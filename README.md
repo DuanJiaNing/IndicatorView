@@ -2,6 +2,8 @@
 
 >**自定义View和属性动画相结合实现支持动态修改指示点位置，拖拽或点击改变指示点位置，点击位置监听及切换动画自定义的圆点指示器。**
 
+#### 开发背景
+最近学习了自定义View和属性动画的知识，开发这个简单的圆点指示器以巩固所学知识。
 #### 效果图
 
 ![](http://img.blog.csdn.net/20170406005647275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYWltZWltZWlUUw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
