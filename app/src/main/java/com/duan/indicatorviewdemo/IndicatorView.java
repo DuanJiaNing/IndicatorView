@@ -30,28 +30,32 @@ public class IndicatorView extends View {
 
     private boolean mLineVisible;
     private int mLineColor;
-    private int mLineHeight;
     private int mLineWidth;
+    private int mLineLength;
 
     private int mIndicatorSize;
     private int mIndicatorColor;
     private int mIndicatorPos;
-    private int mIndicatorSwitchAnim;
-
     private boolean mDotClickEnable;
+
     private boolean mIndicatorDragEnable;
     private boolean mTouchEnable;
 
+    private int mIndicatorSwitchAnim;
     public static final int INDICATOR_SWITCH_ANIM_NONE = 0;
     public static final int INDICATOR_SWITCH_ANIM_TRANSLATION = 1;
     public static final int INDICATOR_SWITCH_ANIM_SQUEEZE = 2;
+
+    private int mIndicatorOrientation;
+    public static final int INDICATOR_ORIENTATION_VERTICAL = 0;
+    public static final int INDICATOR_ORIENTATION_HORIZONTAL = 1;
 
     private int mDuration;
 
     private int defaultDotSize = 8;
     private int defaultIndicatorSize = 15;
-    private int defaultLineWidth = 40;
-    private int minLineHeight = 1;
+    private int defaultLineLength = 40;
+    private int minLineWidth = 1;
     private int maxDotCount = 30;
     private int minDotNum = 2;
 
@@ -156,6 +160,9 @@ public class IndicatorView extends View {
         //默认动画为“挤扁”
         mIndicatorSwitchAnim = array.getInteger(R.styleable.IndicatorView_IndicatorSwitchAnimation, INDICATOR_SWITCH_ANIM_SQUEEZE);
 
+        //默认为 水平
+        mIndicatorOrientation = array.getInteger(R.styleable.IndicatorView_indicatorOrientation, INDICATOR_ORIENTATION_HORIZONTAL);
+
         mTouchEnable = array.getBoolean(R.styleable.IndicatorView_touchEnable, true);
         if (!mTouchEnable) {
             mIndicatorDragEnable = false;
@@ -170,10 +177,10 @@ public class IndicatorView extends View {
         mIndicatorColor = array.getColor(R.styleable.IndicatorView_indicatorColor, Color.LTGRAY);
 
         mDotSize = array.getDimensionPixelSize(R.styleable.IndicatorView_dotSize, defaultDotSize);
-        mLineWidth = array.getDimensionPixelSize(R.styleable.IndicatorView_lineWidth, defaultLineWidth);
-        mLineHeight = array.getDimensionPixelSize(R.styleable.IndicatorView_lineHeight, minLineHeight);
+        mLineLength = array.getDimensionPixelSize(R.styleable.IndicatorView_lineLength, defaultLineLength);
+        mLineWidth = array.getDimensionPixelSize(R.styleable.IndicatorView_lineWidth, minLineWidth);
         mIndicatorSize = array.getDimensionPixelSize(R.styleable.IndicatorView_indicatorSize, defaultIndicatorSize);
-        //因为在onDraw中绘制指示点时会通过 indicatorHolder.getWidth() / 2 使两点间切换动画播放过程中椭圆边界不超过 mLineWidth * Math.abs(switchTo - mIndicatorPos) + mIndicatorSize
+        //因为在onDraw中绘制指示点时会通过 indicatorHolder.getWidth() / 2 使两点间切换动画播放过程中椭圆边界不超过 mLineLength * Math.abs(switchTo - mIndicatorPos) + mIndicatorSize
         //因而这里乘以 2 否则绘制出来的大小会只有实际大小的一半
         mIndicatorSize *= 2;
         //默认动画时间为500ms
@@ -199,23 +206,33 @@ public class IndicatorView extends View {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         int width;
         int height;
-        setPadding(getPaddingLeft() + mIndicatorSize / 3,getPaddingTop(),getPaddingRight() + mIndicatorSize / 3,getPaddingBottom());
+
+        //默认的小圆点触摸反馈动画会放大小圆点，多留些空间给缩放动画（
+        // 如果你发现你的小圆点在一些情况下显示不全时可在xml中增大padding或修改下面两个变量的值
+        int expandTerminalPadding = getPaddingLeft() + mIndicatorSize / 6;//左右两端
+        int expandSidePadding = getPaddingTop() + mIndicatorSize / 5;//上下两侧
+
+        setPadding(expandTerminalPadding, expandSidePadding, expandTerminalPadding, expandSidePadding);
+
         if (widthMode == MeasureSpec.EXACTLY) {
             width = widthSize;
-        } else {
-            //xml中宽度设为warp_content
-            width = getPaddingLeft() + ((mDotCount - 1) * mLineWidth + mIndicatorSize) + getPaddingRight();
+        } else {//xml中宽度设为warp_content
+            if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) //纵向
+                width = getPaddingLeft() + getPaddingRight() + mIndicatorSize;
+            else
+                width = getPaddingLeft() + ((mDotCount - 1) * mLineLength + mIndicatorSize) + getPaddingRight();
         }
 
         if (heightMode == MeasureSpec.EXACTLY) {
             height = heightSize;
         } else {
-            height = getPaddingTop() + mIndicatorSize + getPaddingBottom();
+            if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) //纵向
+                height = ((mDotCount - 1) * mLineLength + mIndicatorSize) + getPaddingBottom() + getPaddingTop();
+            else
+                height = getPaddingTop() + mIndicatorSize + getPaddingBottom();
         }
 
-        //若使用默认的指示点触摸动画（放大+渐变颜色）需要加上放大后指示点与放大前指示点的高度差
-        //使用自定义时动画时则不加
-        setMeasuredDimension(width, mPressAnimator == null ? height + mIndicatorSize / 2 : height);
+        setMeasuredDimension(width, height);
 
     }
 
@@ -225,12 +242,89 @@ public class IndicatorView extends View {
         //getHeight方法在onDraw方法中会取到错误的值
         if (indicatorHolder != null) {
             indicatorHolder.setColor(mIndicatorColor);
-            indicatorHolder.setCenterX(mIndicatorPos * mLineWidth + getPaddingLeft() + mIndicatorSize / 2);
-            indicatorHolder.setCenterY(getHeight() / 2);
+            if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+                indicatorHolder.setCenterX(getWidth() / 2);
+                indicatorHolder.setCenterY(mIndicatorPos * mLineLength + getPaddingBottom() + mIndicatorSize / 2);
+            } else {
+                indicatorHolder.setCenterX(mIndicatorPos * mLineLength + getPaddingLeft() + mIndicatorSize / 2);
+                indicatorHolder.setCenterY(getHeight() / 2);
+            }
             indicatorHolder.setHeight(mIndicatorSize);
             indicatorHolder.setWidth(mIndicatorSize);
             indicatorHolder.setAlpha(255);
         }
+    }
+
+    //画线段
+    private void drawLine(Canvas canvas) {
+        mPaint.setColor(mLineColor);
+
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+            for (int i = 0; i < mDotCount - 1; i++) {
+                int top = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * (i + 1));
+                int bottom = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * i);
+                int left = (getWidth() - mLineWidth) / 2;
+                int right = (getWidth() + mLineWidth) / 2;
+
+                canvas.drawRect(left, top, right, bottom, mPaint);
+            }
+        } else {
+            for (int i = 0; i < mDotCount - 1; i++) {
+                int top = (getHeight() - mLineWidth) / 2;
+                int bottom = (getHeight() + mLineWidth) / 2;
+                int left = getPaddingLeft() + mIndicatorSize / 2 + mLineLength * i;
+                int right = getPaddingLeft() + mIndicatorSize / 2 + mLineLength * (i + 1);
+
+                canvas.drawRect(left, top, right, bottom, mPaint);
+            }
+        }
+    }
+
+    //画小圆点
+    private void drawDots(Canvas canvas) {
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+            for (int i = 0; i < clickableAreas.length; i++) {
+                int cx = getWidth() / 2;
+                int cy = i * mLineLength + getPaddingBottom() + mIndicatorSize / 2;
+
+                if (switchTo != -1 && i == switchTo)
+                    mPaint.setColor(mIndicatorColor);
+                else
+                    mPaint.setColor(mDotColor);
+
+                canvas.drawCircle(cx, cy, mDotSize, mPaint);
+                clickableAreas[i][0] = cx;
+                clickableAreas[i][1] = cy;
+            }
+        } else {
+            for (int i = 0; i < clickableAreas.length; i++) {
+                int cx = i * mLineLength + getPaddingLeft() + mIndicatorSize / 2;
+                int cy = getHeight() / 2;
+
+                if (switchTo != -1 && i == switchTo)
+                    mPaint.setColor(mIndicatorColor);
+                else
+                    mPaint.setColor(mDotColor);
+                canvas.drawCircle(cx, cy, mDotSize, mPaint);
+
+                clickableAreas[i][0] = cx;
+                clickableAreas[i][1] = cy;
+            }
+        }
+    }
+
+    //画指示点
+    private void drawIndicator(Canvas canvas) {
+        mPaint.setColor(indicatorHolder.getColor());
+        mPaint.setAlpha(indicatorHolder.getAlpha());
+
+        canvas.drawOval(
+                indicatorHolder.getCenterX() - indicatorHolder.getWidth() / 2,
+                indicatorHolder.getCenterY() - indicatorHolder.getHeight() / 2,
+                indicatorHolder.getCenterX() + indicatorHolder.getWidth() / 2,
+                indicatorHolder.getCenterY() + indicatorHolder.getHeight() / 2,
+                mPaint
+        );
     }
 
     @Override
@@ -240,41 +334,17 @@ public class IndicatorView extends View {
         //去锯齿
         mPaint.setAntiAlias(true);
 
-        //画线（如果可见）
+        //画线段（如果可见）
         if (mLineVisible) {
-            mPaint.setColor(mLineColor);
-            for (int i = 0; i < mDotCount - 1; i++) {
-                int left = getPaddingLeft() + mIndicatorSize / 2 + mLineWidth * i;
-                int top = (getHeight() - mLineHeight) / 2;
-                int right = getPaddingLeft() + mIndicatorSize / 2 + mLineWidth * (i + 1);
-                int bottom = (getHeight() + mLineHeight) / 2;
-                canvas.drawRect(left, top, right, bottom, mPaint);
-            }
+            drawLine(canvas);
         }
 
         //画小圆点
-        for (int i = 0; i < clickableAreas.length; i++) {
-            int cx = i * mLineWidth + getPaddingLeft() + mIndicatorSize / 2;
-            int cy = getHeight() / 2;
-            if (switchTo != -1 && i == switchTo)
-                mPaint.setColor(mIndicatorColor);
-            else
-                mPaint.setColor(mDotColor);
-            canvas.drawCircle(cx, cy, mDotSize, mPaint);
-            clickableAreas[i][0] = cx;
-            clickableAreas[i][1] = cy;
-        }
+        drawDots(canvas);
 
         //画指示点
-        mPaint.setColor(indicatorHolder.getColor());
-        mPaint.setAlpha(indicatorHolder.getAlpha());
-        canvas.drawOval(
-                indicatorHolder.getCenterX() - indicatorHolder.getWidth() / 2,
-                indicatorHolder.getCenterY() - indicatorHolder.getHeight() / 2,
-                indicatorHolder.getCenterX() + indicatorHolder.getWidth() / 2,
-                indicatorHolder.getCenterY() + indicatorHolder.getHeight() / 2,
-                mPaint
-        );
+        drawIndicator(canvas);
+
     }
 
     @Override
@@ -288,14 +358,25 @@ public class IndicatorView extends View {
             return true;
 
         int ex = (int) event.getX();
-        int temp = mLineWidth / 2;
+        int ey = (int) event.getY();
+        int temp = mLineLength / 2;
         switchTo = 0;
         //判断当前手指所在的小圆点是哪个
-        for (; switchTo < mDotCount; switchTo++) {
-            int[] xy = clickableAreas[switchTo];
-            //只对x坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
-            if (ex <= xy[0] + temp && ex >= xy[0] - temp) {
-                break;
+        if (mIndicatorOrientation != INDICATOR_ORIENTATION_VERTICAL) { //纵向
+            for (; switchTo < mDotCount; switchTo++) {
+                int[] xy = clickableAreas[switchTo];
+                //只对x坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
+                if (ex <= xy[0] + temp && ex >= xy[0] - temp) {
+                    break;
+                }
+            }
+        } else {
+            for (; switchTo < mDotCount; switchTo++) {
+                int[] xy = clickableAreas[switchTo];
+                //只对y坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
+                if (ey <= xy[1] + temp && ey >= xy[1] - temp) {
+                    break;
+                }
             }
         }
 
@@ -321,7 +402,10 @@ public class IndicatorView extends View {
         } else { //按着+拖拽
             if (mIndicatorDragEnable) {
                 haveIndicatorDraged = true;
-                indicatorHolder.setCenterX(ex);
+                if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+                    indicatorHolder.setCenterY(ey);
+                } else
+                    indicatorHolder.setCenterX(ex);
             }
         }
 
@@ -408,9 +492,17 @@ public class IndicatorView extends View {
     private void startSwitchAnimation() {
 
         //平移
-        int startX = indicatorHolder.getCenterX();
-        int endX = switchTo * mLineWidth + getPaddingLeft() + mIndicatorSize / 2;
-        ValueAnimator trainsAnim = ObjectAnimator.ofInt(indicatorHolder, "centerX", startX, endX);
+        int end;
+        ValueAnimator trainsAnim;
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+            int start = indicatorHolder.getCenterY();
+            end = switchTo * mLineLength + getPaddingBottom() + mIndicatorSize / 2;
+            trainsAnim = ObjectAnimator.ofInt(indicatorHolder, "centerY", start, end);
+        } else {
+            int start = indicatorHolder.getCenterX();
+            end = switchTo * mLineLength + getPaddingLeft() + mIndicatorSize / 2;
+            trainsAnim = ObjectAnimator.ofInt(indicatorHolder, "centerX", start, end);
+        }
         trainsAnim.setDuration(mDuration);
 
         tempLineColor = mLineColor;
@@ -441,15 +533,29 @@ public class IndicatorView extends View {
         if (mSwitchAnimator == null) {
             switch (mIndicatorSwitchAnim) {
                 case INDICATOR_SWITCH_ANIM_NONE:
-                    indicatorHolder.setCenterX(endX);
+                    if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) //纵向
+                        indicatorHolder.setCenterY(end);
+                    else
+                        indicatorHolder.setCenterX(end);
                     animEnd();
                     break;
                 case INDICATOR_SWITCH_ANIM_SQUEEZE:
                     //“挤扁”
-                    int centerH = mLineHeight * Math.abs(switchTo - mIndicatorPos);
-                    int centerW = Math.abs(indicatorHolder.getCenterX() - clickableAreas[switchTo][0]);
-                    ValueAnimator heightAnim = ObjectAnimator.ofInt(indicatorHolder, "height", mIndicatorSize, centerH, 0);
-                    ValueAnimator widthAnim = ObjectAnimator.ofInt(indicatorHolder, "width", mIndicatorSize, centerW, 0);
+                    ValueAnimator heightAnim;
+                    ValueAnimator widthAnim;
+                    int centerH;
+                    int centerW;
+                    if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+                        centerH = Math.abs(indicatorHolder.getCenterY() - clickableAreas[switchTo][1]);
+                        centerW = mLineWidth;
+                    } else {
+                        centerH = mLineWidth;
+                        //indicatorHolder.getCenterX()的值在动画过程中会被trainsAnim动画不断改变
+                        //centerW：指示点当前所在位置和目标点间的距离
+                        centerW = Math.abs(indicatorHolder.getCenterX() - clickableAreas[switchTo][0]);
+                    }
+                    heightAnim = ObjectAnimator.ofInt(indicatorHolder, "height", mIndicatorSize, centerH, 0);
+                    widthAnim = ObjectAnimator.ofInt(indicatorHolder, "width", mIndicatorSize, centerW, 0);
                     heightAnim.setDuration(mDuration);
                     widthAnim.setDuration(mDuration);
 
@@ -603,7 +709,7 @@ public class IndicatorView extends View {
     }
 
     public void setLineHeight(int lineHeight) {
-        this.mLineHeight = lineHeight;
+        this.mLineWidth = lineHeight;
         invalidate();
     }
 
@@ -636,11 +742,11 @@ public class IndicatorView extends View {
     }
 
     public int getLinePixelWidth() {
-        return mLineWidth;
+        return mLineLength;
     }
 
     public int getLinePixelHeight() {
-        return mLineHeight;
+        return mLineWidth;
     }
 
     public int getIndicatorColor() {
@@ -657,6 +763,10 @@ public class IndicatorView extends View {
 
     public int getIndicatorPos() {
         return mIndicatorPos;
+    }
+
+    public int getmIndicatorOrientation() {
+        return mIndicatorOrientation;
     }
 
 }

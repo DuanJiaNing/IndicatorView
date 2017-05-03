@@ -32,9 +32,9 @@
         app:dotNum="6"
         app:dotSize="10dp"
         app:indicatorSize="20dp"
-        app:lineHeight="1px"
+        app:lineWidth="1px"
 
-        app:lineWidth="50dp"
+        app:lineLength="50dp"
         app:touchEnable="false" />
 
     <TextView
@@ -57,8 +57,8 @@
         app:indicatorSize="20dp"
         app:lineColor="#000000"
 
-        app:lineHeight="2px"
-        app:lineWidth="60dp" />
+        app:lineWidth="2px"
+        app:lineLength="60dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
         app:indicatorPos="2"
         app:indicatorSize="17dp"
         app:lineVisible="false"
-        app:lineWidth="60dp" />
+        app:lineLength="60dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
         app:indicatorPos="2"
         app:lineColor="#000"
         app:indicatorSize="15dp"
-        app:lineWidth="60dp" />
+        app:lineLength="60dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -118,7 +118,7 @@
 
         app:indicatorSize="25dp"
         app:lineColor="#b3b3b3"
-        app:lineHeight="4dp"
-        app:lineWidth="85dp" />
+        app:lineWidth="4dp"
+        app:lineLength="85dp" />
 
 </LinearLayout>

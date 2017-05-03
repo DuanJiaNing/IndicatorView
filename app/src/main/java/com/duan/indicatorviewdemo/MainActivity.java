@@ -23,17 +23,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
+//        setContentView(R.layout.activity_main);
+//        indicator1 = (IndicatorView) findViewById(R.id.indicator1);
+//        indicator2 = (IndicatorView) findViewById(R.id.indicator2);
+//        indicator3 = (IndicatorView) findViewById(R.id.indicator3);
+//        indicator4 = (IndicatorView) findViewById(R.id.indicator4);
+//        execuInV1();
+//        execuInV2();
+//        execuInV3();
+//        execuInV4();
 
-        indicator1 = (IndicatorView) findViewById(R.id.indicator1);
-        indicator2 = (IndicatorView) findViewById(R.id.indicator2);
-        indicator3 = (IndicatorView) findViewById(R.id.indicator3);
-        indicator4 = (IndicatorView) findViewById(R.id.indicator4);
-
-        execuInV1();
-        execuInV2();
-        execuInV3();
-        execuInV4();
     }
 
     //代码动态指定属性
@@ -121,4 +121,5 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 }
