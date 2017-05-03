@@ -7,7 +7,7 @@
 
 #### 二.效果图
 
-![](http://img.blog.csdn.net/20170406005647275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYWltZWltZWlUUw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorViewDemo/master/screenshot001.gif)
 
 #### 三.IndicatorView主要属性
 ##### 3.1 构成元素
@@ -53,6 +53,10 @@
 #### 六.版本变化
 - v1.0 2017-04-03：初始化
 - v1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
+``` xml
+  app:indicatorOrientation="vertical"
+```
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorViewDemo/master/screenshot002.gif)
 #### 六.未来的开发计划
 - [X] 添加**纵向视图**支持
 - [ ] 自定义指示点在各个位置的颜色
