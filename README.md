@@ -9,7 +9,6 @@
 
 ![](http://img.blog.csdn.net/20170406005647275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYWltZWltZWlUUw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
-自定 View 代码写在 `IndicatorView.java`中
 #### 三.IndicatorView主要属性
 ##### 3.1 构成元素
 - 小圆点：固定不动的圆形
