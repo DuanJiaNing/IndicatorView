@@ -61,6 +61,7 @@ public class IndicatorView extends View {
 
     private Paint mPaint;
 
+
     /**
      * 保存所有小圆点的圆点坐标，用于在touch事件中判断触摸了哪个点
      */

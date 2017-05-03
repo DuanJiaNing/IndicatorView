@@ -31,6 +31,7 @@
         <enum name="horizontal" value="1"/> <!--水平-->
     </attr>
 
+
     <declare-styleable name="IndicatorView">
         <attr name="indicatorOrientation"/>
         <attr name="dotColor" />
