@@ -1,4 +1,4 @@
-         ## 自定义View和属性动画ValueAnimator实现圆点指示器:blush:
+## 自定义View和属性动画ValueAnimator实现圆点指示器:blush:
 
 >**自定义View和属性动画相结合实现支持动态修改指示点位置，拖拽或点击改变指示点位置，点击位置监听及切换动画自定义的圆点指示器。**
 
@@ -58,6 +58,9 @@
   app:indicatorOrientation="vertical"
 ```
 ![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorViewDemo/master/screenshot002.gif)
+
+具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器——支持“纵向视图”](http://blog.csdn.net/aimeimeits/article/details/71158500)
+
 #### 六.未来的开发计划
 - [X] 添加**纵向视图**支持
 - [ ] 自定义指示点在各个位置的颜色
