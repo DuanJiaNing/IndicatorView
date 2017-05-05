@@ -53,8 +53,36 @@
 #### 六.版本变化
 - v1.0 2017-04-03：初始化
 - v1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
+- v1.1.1 2017-05-05：添加指示点拖拽监听和指示点位置改变监听，在代码中设置监听器即可监听指示点拖拽时的位置改变（映射到的小圆点对应的位置），及其间距变化（与最左或最下的小圆点间的距离）。
+```java
+IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+        indicator.setOnIndicatorSeekListener(new IndicatorView.OnIndicatorSeekListener() {
+            @Override
+            public void onSeekChange(IndicatorView view, int distance, int dotPos) {
+                Log.i(TAG, "onSeekChange: distance=" + distance + " dot=" + dotPos);
+            }
+
+            @Override
+            public void onStartTrackingTouch(IndicatorView view) {
+                Toast.makeText(MainActivity.this, "touched", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSopTrackingTouch(IndicatorView view) {
+                Toast.makeText(MainActivity.this, "touch leave", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        indicator.setOnIndicatorChangeListener(new IndicatorView.OnIndicatorChangeListener() {
+            @Override
+            public void onIndicatorChange(int currentPos, int oldPos) {
+                Log.i(TAG, "onIndicatorChange: cuPos=" + currentPos + " oldPos=" + oldPos);
+            }
+        });
+```
 #### 六.未来的开发计划
 - [X] 添加**纵向视图**支持
+- [X] 添加指示点拖拽监听和指示点位置改变监听
 - [ ] 自定义指示点在各个位置的颜色
 
 #### 六.Q&A

@@ -61,7 +61,6 @@ public class IndicatorView extends View {
 
     private Paint mPaint;
 
-
     /**
      * 保存所有小圆点的圆点坐标，用于在touch事件中判断触摸了哪个点
      */
@@ -78,9 +77,14 @@ public class IndicatorView extends View {
     private int switchTo = -1;
 
     /**
+     * 辅助 switchTo 变量，
+     */
+    private int switchToTemp;
+
+    /**
      * 手松开后根据该变量判断是否需要启动切换动画
      */
-    private boolean haveIndicatorAniming = false;
+    private boolean haveIndicatorPressAniming = false;
 
     /**
      * 指示点是否被拖拽过，当指示点被拖拽了但没有超过当前指示点位置范围时使之回到原位
@@ -127,9 +131,61 @@ public class IndicatorView extends View {
         AnimatorSet onIndicatorSwitch(IndicatorView view, IndicatorHolder target);
     }
 
-    private OnDotClickListener mListener;
+    /**
+     * 指示点拖拽状态监听（前提为指示点可拖拽）
+     */
+    public interface OnIndicatorSeekListener {
+
+        /**
+         * 指示点被拖拽时回调
+         *
+         * @param view     view
+         * @param distance 当前指示点位置与最左边（或最下边“纵向视图”）的小圆点的间距
+         * @param dotPos   当前指示点靠近的小圆点（松手后指示点会固定到这一位置）
+         */
+        void onSeekChange(IndicatorView view, int distance, int dotPos);
+
+        /**
+         * 指示点开始被拖拽，在指示点触摸回馈动画开始时回调
+         *
+         * @param view view
+         */
+        void onStartTrackingTouch(IndicatorView view);
+
+        /**
+         * 指示点停止被拖拽，手指离开指示点后立即回调
+         *
+         * @param view view
+         */
+        void onSopTrackingTouch(IndicatorView view);
+
+    }
+
+    @FunctionalInterface
+    public interface OnIndicatorChangeListener {
+        /**
+         * 指示点所在位置改变时回调
+         * 注意：若拖动指示点位置从1到3再回到2后松手，则 oldPos 的值始终为1，currentPos 的值依次为 2,3,2
+         * @param currentPos 当前所在位置
+         * @param oldPos     开始拖动时所在的位置
+         */
+        void onIndicatorChange(int currentPos, int oldPos);
+    }
+
     private OnIndicatorPressAnimator mPressAnimator;
     private OnIndicatorSwitchAnimator mSwitchAnimator;
+
+    private OnDotClickListener mListener;
+    private OnIndicatorSeekListener mSeekListener;
+    private OnIndicatorChangeListener mChangeListener;
+
+    public void setOnIndicatorChangeListener(OnIndicatorChangeListener mChangeListener) {
+        this.mChangeListener = mChangeListener;
+    }
+
+    public void setOnIndicatorSeekListener(OnIndicatorSeekListener mSeekListener) {
+        this.mSeekListener = mSeekListener;
+    }
 
     public void setOnIndicatorPressAnimator(OnIndicatorPressAnimator pressAnimator) {
         this.mPressAnimator = pressAnimator;
@@ -283,14 +339,17 @@ public class IndicatorView extends View {
 
     //画小圆点
     private void drawDots(Canvas canvas) {
+
+        switchToTemp = switchTo;//用于 mChangeListener 回调判断，见 onTouchEvent 方法
+
         if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
             for (int i = 0; i < clickableAreas.length; i++) {
                 int cx = getWidth() / 2;
                 int cy = i * mLineLength + getPaddingBottom() + mIndicatorSize / 2;
 
-                if (switchTo != -1 && i == switchTo)
+                if (switchTo != -1 && i == switchTo) {
                     mPaint.setColor(mIndicatorColor);
-                else
+                } else
                     mPaint.setColor(mDotColor);
 
                 canvas.drawCircle(cx, cy, mDotSize, mPaint);
@@ -302,9 +361,9 @@ public class IndicatorView extends View {
                 int cx = i * mLineLength + getPaddingLeft() + mIndicatorSize / 2;
                 int cy = getHeight() / 2;
 
-                if (switchTo != -1 && i == switchTo)
+                if (switchTo != -1 && i == switchTo) {
                     mPaint.setColor(mIndicatorColor);
-                else
+                } else
                     mPaint.setColor(mDotColor);
                 canvas.drawCircle(cx, cy, mDotSize, mPaint);
 
@@ -355,7 +414,7 @@ public class IndicatorView extends View {
             return true;
 
         //动画正在进行时不在响应点击事件
-        if (haveIndicatorAniming)
+        if (haveIndicatorPressAniming)
             return true;
 
         int ex = (int) event.getX();
@@ -381,8 +440,14 @@ public class IndicatorView extends View {
             }
         }
 
-        if (switchTo != mIndicatorPos && !mDotClickEnable && !haveIndicatorDraged)
+        if (switchTo != switchToTemp && switchTo != mIndicatorPos) {
+            if (mChangeListener != null)
+                mChangeListener.onIndicatorChange(switchTo, mIndicatorPos);
+        }
+
+        if (switchTo != mIndicatorPos && !mDotClickEnable && !haveIndicatorDraged) {
             return true;
+        }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             //按下且不是指示点所在的小圆点
@@ -395,6 +460,10 @@ public class IndicatorView extends View {
                     startPressAnimation();
             }
         } else if (event.getAction() == MotionEvent.ACTION_UP) { //手抬起
+            if (mIndicatorDragEnable)
+                if (mSeekListener != null)
+                    mSeekListener.onSopTrackingTouch(this);
+
             if (switchTo != mIndicatorPos || haveIndicatorDraged) {
                 haveIndicatorDraged = false;
                 if (mIndicatorDragEnable)
@@ -405,8 +474,13 @@ public class IndicatorView extends View {
                 haveIndicatorDraged = true;
                 if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
                     indicatorHolder.setCenterY(ey);
-                } else
+                    if (mSeekListener != null)
+                        mSeekListener.onSeekChange(this, (getHeight() - (getPaddingBottom() + mIndicatorSize / 2)) - indicatorHolder.getCenterY(), switchTo);
+                } else {
                     indicatorHolder.setCenterX(ex);
+                    if (mSeekListener != null)
+                        mSeekListener.onSeekChange(this, indicatorHolder.getCenterX() - (getPaddingLeft() + mIndicatorSize / 2), switchTo);
+                }
             }
         }
 
@@ -433,17 +507,20 @@ public class IndicatorView extends View {
             defaultIndicatorPressAnim.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    haveIndicatorAniming = true;
+                    haveIndicatorPressAniming = true;
+                    if (mIndicatorDragEnable)
+                        if (mSeekListener != null)
+                            mSeekListener.onStartTrackingTouch(IndicatorView.this);
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    haveIndicatorAniming = false;
+                    haveIndicatorPressAniming = false;
                 }
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-                    haveIndicatorAniming = false;
+                    haveIndicatorPressAniming = false;
 
                 }
 
@@ -461,17 +538,20 @@ public class IndicatorView extends View {
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    haveIndicatorAniming = true;
+                    haveIndicatorPressAniming = true;
+                    if (mIndicatorDragEnable)
+                        if (mSeekListener != null)
+                            mSeekListener.onStartTrackingTouch(IndicatorView.this);
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    haveIndicatorAniming = false;
+                    haveIndicatorPressAniming = false;
                 }
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-                    haveIndicatorAniming = false;
+                    haveIndicatorPressAniming = false;
 
                 }
 
@@ -512,7 +592,7 @@ public class IndicatorView extends View {
             @Override
             public void onAnimationStart(Animator animation) {
                 mLineColor = indicatorHolder.getColor();
-                haveIndicatorAniming = true;
+                haveIndicatorPressAniming = true;
             }
 
             @Override
@@ -585,7 +665,7 @@ public class IndicatorView extends View {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     mLineColor = indicatorHolder.getColor();
-                    haveIndicatorAniming = true;
+                    haveIndicatorPressAniming = true;
                 }
 
                 @Override
@@ -615,7 +695,7 @@ public class IndicatorView extends View {
         mLineColor = tempLineColor;
         mIndicatorPos = switchTo;
         switchTo = -1;
-        haveIndicatorAniming = false;
+        haveIndicatorPressAniming = false;
     }
 
     /**

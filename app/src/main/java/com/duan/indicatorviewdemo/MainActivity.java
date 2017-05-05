@@ -4,9 +4,14 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -15,6 +20,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private IndicatorView indicator1;
     private IndicatorView indicator2;
     private IndicatorView indicator3;
@@ -24,6 +30,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+        indicator.setOnIndicatorSeekListener(new IndicatorView.OnIndicatorSeekListener() {
+            @Override
+            public void onSeekChange(IndicatorView view, int distance, int dotPos) {
+                Log.i(TAG, "onSeekChange: distance=" + distance + " dot=" + dotPos);
+            }
+
+            @Override
+            public void onStartTrackingTouch(IndicatorView view) {
+                Toast.makeText(MainActivity.this, "摸到了", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSopTrackingTouch(IndicatorView view) {
+                Toast.makeText(MainActivity.this, "不摸了", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        indicator.setOnIndicatorChangeListener(new IndicatorView.OnIndicatorChangeListener() {
+            @Override
+            public void onIndicatorChange(int currentPos, int oldPos) {
+                Log.i(TAG, "onIndicatorChange: cuPos=" + currentPos + " oldPos=" + oldPos);
+            }
+        });
 
 //        setContentView(R.layout.activity_main);
 //        indicator1 = (IndicatorView) findViewById(R.id.indicator1);
