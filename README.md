@@ -1,4 +1,4 @@
-         ## 自定义View和属性动画ValueAnimator实现圆点指示器:blush:
+## 自定义View和属性动画ValueAnimator实现圆点指示器:blush:
 
 >**自定义View和属性动画相结合实现支持动态修改指示点位置，拖拽或点击改变指示点位置，点击位置监听及切换动画自定义的圆点指示器。**
 
@@ -7,7 +7,7 @@
 
 #### 二.效果图
 
-![](http://img.blog.csdn.net/20170406005647275?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvYWltZWltZWlUUw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorViewDemo/master/screenshot001.gif)
 
 #### 三.IndicatorView主要属性
 ##### 3.1 构成元素
@@ -23,6 +23,7 @@
 - 默认提供了两个用于指示点间切换的动画（平移和挤扁），也可选择不使用动画或自定义
 - 默认提供的切换动画的时间可指定
 - 启用/禁用拖拽切换（点击切换或两者）功能
+- 指定控件的显示方向，水平或是纵向（默认为水平）
 ##### 3.3 功能
 - 通过代码动态修改部分属性
 - 通过代码获得属性值，如当前指示点位置，颜色等
@@ -53,6 +54,13 @@
 #### 六.版本变化
 - v1.0 2017-04-03：初始化
 - v1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
+``` xml
+  app:indicatorOrientation="vertical"
+```
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorViewDemo/master/screenshot002.gif)
+
+具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器——支持“纵向视图”](http://blog.csdn.net/aimeimeits/article/details/71158500)
+
 - v1.1.1 2017-05-05：添加指示点拖拽监听和指示点位置改变监听，在代码中设置监听器即可监听指示点拖拽时的位置改变（映射到的小圆点对应的位置），及其间距变化（与最左或最下的小圆点间的距离）。
 ```java
 IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
