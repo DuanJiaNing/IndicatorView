@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         indicator.setOnIndicatorSeekListener(new IndicatorView.OnIndicatorSeekListener() {
             @Override
             public void onSeekChange(IndicatorView view, int distance, int dotPos) {
-                Log.i(TAG, "onSeekChange: distance=" + distance + " dot=" + dotPos);
             }
 
             @Override

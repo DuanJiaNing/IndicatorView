@@ -12,8 +12,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by DuanJiaNing on 2017/4/3.
@@ -60,6 +63,14 @@ public class IndicatorView extends View {
     private int minDotNum = 2;
 
     private Paint mPaint;
+
+    /**
+     * 上下左右边界
+     */
+    private int mBorderTop;
+    private int mBorderBottom;
+    private int mBorderRight;
+    private int mBorderLeft;
 
     /**
      * 保存所有小圆点的圆点坐标，用于在touch事件中判断触摸了哪个点
@@ -166,6 +177,7 @@ public class IndicatorView extends View {
         /**
          * 指示点所在位置改变时回调
          * 注意：若拖动指示点位置从1到3再回到2后松手，则 oldPos 的值始终为1，currentPos 的值依次为 2,3,2
+         *
          * @param currentPos 当前所在位置
          * @param oldPos     开始拖动时所在的位置
          */
@@ -296,6 +308,16 @@ public class IndicatorView extends View {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
+
+        //计算出上下左右边界
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) {
+            mBorderTop = getPaddingTop() + mIndicatorSize / 2;
+            mBorderBottom = mBorderTop + mLineLength * (mDotCount - 1);
+        } else {
+            mBorderLeft = getPaddingLeft() + mIndicatorSize / 2;
+            mBorderRight = mBorderLeft + mLineLength * (mDotCount - 1);
+        }
+
         //getHeight方法在onDraw方法中会取到错误的值
         if (indicatorHolder != null) {
             indicatorHolder.setColor(mIndicatorColor);
@@ -310,6 +332,7 @@ public class IndicatorView extends View {
             indicatorHolder.setWidth(mIndicatorSize);
             indicatorHolder.setAlpha(255);
         }
+
     }
 
     //画线段
@@ -422,7 +445,7 @@ public class IndicatorView extends View {
         int temp = mLineLength / 2;
         switchTo = 0;
         //判断当前手指所在的小圆点是哪个
-        if (mIndicatorOrientation != INDICATOR_ORIENTATION_VERTICAL) { //纵向
+        if (mIndicatorOrientation != INDICATOR_ORIENTATION_VERTICAL) { //横向
             for (; switchTo < mDotCount; switchTo++) {
                 int[] xy = clickableAreas[switchTo];
                 //只对x坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
@@ -430,6 +453,12 @@ public class IndicatorView extends View {
                     break;
                 }
             }
+            //超出边界时要检查
+            if (switchTo == mDotCount)
+                if (indicatorHolder.getCenterX() > mBorderRight)
+                    switchTo -= 1;
+                else
+                    switchTo = 0;
         } else {
             for (; switchTo < mDotCount; switchTo++) {
                 int[] xy = clickableAreas[switchTo];
@@ -438,7 +467,22 @@ public class IndicatorView extends View {
                     break;
                 }
             }
+            if (switchTo == mDotCount)
+                if (indicatorHolder.getCenterY() > mBorderTop)
+                    switchTo -= 1;
+                else
+                    switchTo = 0;
+
         }
+
+        //判断是否到达边界（速度慢）
+//        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) {
+//            if (ey > mBorderBottom || ey < mBorderTop)
+//                return true;
+//        } else {
+//            if (ex > mBorderRight || ex < mBorderLeft)
+//                return true;
+//        }
 
         if (switchTo != switchToTemp && switchTo != mIndicatorPos) {
             if (mChangeListener != null)
