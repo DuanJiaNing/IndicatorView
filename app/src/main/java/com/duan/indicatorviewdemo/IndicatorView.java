@@ -1,6 +1,5 @@
 package com.duan.indicatorviewdemo;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -12,11 +11,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by DuanJiaNing on 2017/4/3.

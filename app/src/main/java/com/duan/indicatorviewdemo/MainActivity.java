@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onIndicatorChange: cuPos=" + currentPos + " oldPos=" + oldPos);
             }
         });
-
 //        setContentView(R.layout.activity_main);
 //        indicator1 = (IndicatorView) findViewById(R.id.indicator1);
 //        indicator2 = (IndicatorView) findViewById(R.id.indicator2);

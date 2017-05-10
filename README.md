@@ -89,9 +89,9 @@ IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
             }
         });
 ```
-#### 六.未来的开发计划
+#### 七.未来的开发计划
 - [X] 添加**纵向视图**支持
 - [X] 添加指示点拖拽监听和指示点位置改变监听
 - [ ] 自定义指示点在各个位置的颜色
 
-#### 六.Q&A
+#### 八.Q&A
