@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,28 +33,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
-        indicator.setOnIndicatorSeekListener(new IndicatorView.OnIndicatorSeekListener() {
-            @Override
-            public void onSeekChange(IndicatorView view, int distance, int dotPos) {
-            }
+        IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
 
-            @Override
-            public void onStartTrackingTouch(IndicatorView view) {
-                Toast.makeText(MainActivity.this, "摸到了", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSopTrackingTouch(IndicatorView view) {
-                Toast.makeText(MainActivity.this, "不摸了", Toast.LENGTH_SHORT).show();
-            }
+        indicator.setIndicatorColor(new int[]{
+                getResources().getColor(R.color.color_1),
+                getResources().getColor(R.color.color_2),
+                getResources().getColor(R.color.color_3),
+                getResources().getColor(R.color.color_4),
+                getResources().getColor(R.color.color_5)
         });
+        indicator.changeLineColorWhileSwitch(false);
 
-        indicator.setOnIndicatorChangeListener(new IndicatorView.OnIndicatorChangeListener() {
-            @Override
-            public void onIndicatorChange(int currentPos, int oldPos) {
-                Log.i(TAG, "onIndicatorChange: cuPos=" + currentPos + " oldPos=" + oldPos);
-            }
-        });
+        indicator1.setIndicatorColor(0, getResources().getColor(R.color.color_1));
+        indicator1.setIndicatorColor(indicator2.getDotCount() - 1, getResources().getColor(R.color.yellow));
+        indicator1.setIndicatorColor(indicator2.getDotCount() / 2, getResources().getColor(R.color.color_5));
+
+
 //        setContentView(R.layout.activity_main);
 //        indicator1 = (IndicatorView) findViewById(R.id.indicator1);
 //        indicator2 = (IndicatorView) findViewById(R.id.indicator2);

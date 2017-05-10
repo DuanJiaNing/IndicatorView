@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.Arrays;
+
 /**
  * Created by DuanJiaNing on 2017/4/3.
  */
@@ -50,6 +52,10 @@ public class IndicatorView extends View {
     public static final int INDICATOR_ORIENTATION_HORIZONTAL = 1;
 
     private int mDuration;
+
+    private boolean mChangeLineColorWhileSwitch = true;
+
+    private int[] mIndicatorColors;
 
     private int defaultDotSize = 8;
     private int defaultIndicatorSize = 15;
@@ -254,12 +260,17 @@ public class IndicatorView extends View {
         //判断小圆点个数是否超过上限30
         mDotCount = mDotCount > maxDotCount ? maxDotCount : mDotCount < minDotNum ? minDotNum : mDotCount;
         mIndicatorPos = array.getInteger(R.styleable.IndicatorView_indicatorPos, 0);
+        //在 xml 中指定位置时从 1 开始
+        mIndicatorPos = mIndicatorPos == 0 ? 0 : mIndicatorPos - 1;
         mLineVisible = array.getBoolean(R.styleable.IndicatorView_lineVisible, true);
 
+        mIndicatorColors = new int[mDotCount];
+        for (int i = 0; i < mIndicatorColors.length; i++) {
+            mIndicatorColors[i] = mIndicatorColor;
+        }
         mPaint = new Paint();
         clickableAreas = new int[mDotCount][2];
         indicatorHolder = new IndicatorHolder();
-
 
     }
 
@@ -316,7 +327,7 @@ public class IndicatorView extends View {
 
         //getHeight方法在onDraw方法中会取到错误的值
         if (indicatorHolder != null) {
-            indicatorHolder.setColor(mIndicatorColor);
+            indicatorHolder.setColor(mIndicatorColors[mIndicatorPos]);
             if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
                 indicatorHolder.setCenterX(getWidth() / 2);
                 indicatorHolder.setCenterY(mIndicatorPos * mLineLength + getPaddingBottom() + mIndicatorSize / 2);
@@ -335,7 +346,7 @@ public class IndicatorView extends View {
     private void drawLine(Canvas canvas) {
         mPaint.setColor(mLineColor);
 
-        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向，从下往上绘制
             for (int i = 0; i < mDotCount - 1; i++) {
                 int top = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * (i + 1));
                 int bottom = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * i);
@@ -344,7 +355,7 @@ public class IndicatorView extends View {
 
                 canvas.drawRect(left, top, right, bottom, mPaint);
             }
-        } else {
+        } else { //纵向，从左往右绘制
             for (int i = 0; i < mDotCount - 1; i++) {
                 int top = (getHeight() - mLineWidth) / 2;
                 int bottom = (getHeight() + mLineWidth) / 2;
@@ -361,17 +372,17 @@ public class IndicatorView extends View {
 
         switchToTemp = switchTo;//用于 mChangeListener 回调判断，见 onTouchEvent 方法
 
-        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向 从上往下绘制
             for (int i = 0; i < clickableAreas.length; i++) {
                 int cx = getWidth() / 2;
                 int cy = i * mLineLength + getPaddingBottom() + mIndicatorSize / 2;
 
                 if (switchTo != -1 && i == switchTo) {
-                    mPaint.setColor(mIndicatorColor);
+                    mPaint.setColor(mIndicatorColors[switchTo]);
                 } else
                     mPaint.setColor(mDotColor);
 
-                canvas.drawCircle(cx, cy, mDotSize, mPaint);
+                canvas.drawCircle(cx, cy, mDotSize / 2, mPaint);
                 clickableAreas[i][0] = cx;
                 clickableAreas[i][1] = cy;
             }
@@ -381,10 +392,10 @@ public class IndicatorView extends View {
                 int cy = getHeight() / 2;
 
                 if (switchTo != -1 && i == switchTo) {
-                    mPaint.setColor(mIndicatorColor);
+                    mPaint.setColor(mIndicatorColors[switchTo]);
                 } else
                     mPaint.setColor(mDotColor);
-                canvas.drawCircle(cx, cy, mDotSize, mPaint);
+                canvas.drawCircle(cx, cy, mDotSize / 2, mPaint);
 
                 clickableAreas[i][0] = cx;
                 clickableAreas[i][1] = cy;
@@ -615,6 +626,7 @@ public class IndicatorView extends View {
         //平移
         int end;
         ValueAnimator trainsAnim;
+        ValueAnimator colorAnim;
         if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
             int start = indicatorHolder.getCenterY();
             end = switchTo * mLineLength + getPaddingBottom() + mIndicatorSize / 2;
@@ -624,14 +636,23 @@ public class IndicatorView extends View {
             end = switchTo * mLineLength + getPaddingLeft() + mIndicatorSize / 2;
             trainsAnim = ObjectAnimator.ofInt(indicatorHolder, "centerX", start, end);
         }
-        trainsAnim.setDuration(mDuration);
+
+        //颜色渐变
+        int startColor = indicatorHolder.getColor();
+        int endColor = mIndicatorColors[switchTo];
+        colorAnim = ObjectAnimator.ofArgb(indicatorHolder, "color", startColor, endColor);
+
+        AnimatorSet movingAnim = new AnimatorSet();
+        movingAnim.setDuration(mDuration);
+        movingAnim.play(trainsAnim).with(colorAnim);
 
         tempLineColor = mLineColor;
         AnimatorSet defaultIndicatorSwitchAnim = new AnimatorSet();
         defaultIndicatorSwitchAnim.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mLineColor = indicatorHolder.getColor();
+                if (mChangeLineColorWhileSwitch)
+                    mLineColor = mIndicatorColors[switchTo];
                 haveIndicatorPressAniming = true;
             }
 
@@ -687,12 +708,12 @@ public class IndicatorView extends View {
                     scaleSet.play(scaleAnimH).with(scaleAnimW);
                     scaleSet.setDuration(500);
 
-                    defaultIndicatorSwitchAnim.play(trainsAnim).with(heightAnim).with(widthAnim);
-                    defaultIndicatorSwitchAnim.play(scaleSet).after(trainsAnim);
+                    defaultIndicatorSwitchAnim.play(movingAnim).with(heightAnim).with(widthAnim);
+                    defaultIndicatorSwitchAnim.play(scaleSet).after(movingAnim);
                     defaultIndicatorSwitchAnim.start();
                     break;
                 case INDICATOR_SWITCH_ANIM_TRANSLATION:
-                    defaultIndicatorSwitchAnim.play(trainsAnim);
+                    defaultIndicatorSwitchAnim.play(movingAnim);
                     defaultIndicatorSwitchAnim.start();
                     break;
             }
@@ -700,7 +721,7 @@ public class IndicatorView extends View {
         } else { //自定义
             tempLineColor = mLineColor;
             AnimatorSet customAnim = mSwitchAnimator.onIndicatorSwitch(this, indicatorHolder);
-            customAnim.play(trainsAnim);
+            customAnim.play(movingAnim);
             customAnim.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -760,12 +781,12 @@ public class IndicatorView extends View {
         }
 
         public void setHeight(int height) {
-            this.height = height;
+            this.height = height / 2;
             invalidate();
         }
 
         public void setWidth(int width) {
-            this.width = width;
+            this.width = width / 2;
             invalidate();
         }
 
@@ -834,9 +855,56 @@ public class IndicatorView extends View {
         invalidate();
     }
 
-    public void setIndicatorColor(int indicatorColor) {
-        this.mIndicatorColor = indicatorColor;
-        this.indicatorHolder.setColor(indicatorColor);
+    /**
+     * 在进行指示点切换过程中是否改变线段颜色
+     * @param chage false 为不改变
+     */
+    public void changeLineColorWhileSwitch(boolean chage) {
+        this.mChangeLineColorWhileSwitch = chage;
+    }
+
+    /**
+     * 将指示点在各个位置的颜色全部设置为同一颜色
+     *
+     * @param color 颜色
+     */
+    public void setIndicatorColor(int color) {
+        this.mIndicatorColor = color;
+        this.indicatorHolder.setColor(color);
+        for (int i = 0; i < mIndicatorColors.length; i++) {
+            mIndicatorColors[i] = color;
+        }
+        invalidate();
+    }
+
+    /**
+     * 修改指定位置处指示点的颜色
+     *
+     * @param index 下标 （“水平视图”时从左往右依次为 0 - n，“纵向视图”时从上往下依次为 0 - n）
+     * @param color 颜色
+     */
+    public void setIndicatorColor(int index, int color) {
+        mIndicatorColors[index] = color;
+        invalidate();
+    }
+
+    /**
+     * 为所有指示点设置颜色
+     *
+     * @param colors 颜色值
+     */
+    public void setIndicatorColor(int... colors) {
+
+        if (colors.length < mDotCount) {
+            for (int i = 0; i < colors.length; i++) {
+                mIndicatorColors[i] = colors[i];
+            }
+        } else {
+            for (int i = 0; i < mDotCount; i++) {
+                mIndicatorColors[i] = colors[i];
+            }
+        }
+
         invalidate();
     }
 
@@ -844,7 +912,6 @@ public class IndicatorView extends View {
         if (anim >= INDICATOR_SWITCH_ANIM_NONE && anim <= INDICATOR_SWITCH_ANIM_SQUEEZE)
             this.mIndicatorSwitchAnim = anim;
     }
-
 
     public int getDotColor() {
         return mDotColor;
@@ -870,8 +937,22 @@ public class IndicatorView extends View {
         return mLineWidth;
     }
 
+    public int[] getIndicatorColors() {
+        return mIndicatorColors;
+    }
+
+    /**
+     * 获得指示点的颜色值，该颜色值只有在 xml 中指定或调用{@link #setIndicatorColor(int color)}方法时才会改变
+     * 如果你想获得当前指示点的颜色值应使用{@link #getCurrentIndicatorColor()}或
+     * 使用{@link #getIndicatorColors()}方法获得所有指示点在对应位置的颜色值
+     */
+    @Deprecated
     public int getIndicatorColor() {
         return mIndicatorColor;
+    }
+
+    public int getCurrentIndicatorColor() {
+        return mIndicatorColors[mIndicatorPos];
     }
 
     public int getIndicatorPixeSize() {

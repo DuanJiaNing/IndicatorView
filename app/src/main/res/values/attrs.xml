@@ -6,13 +6,13 @@
     <attr name="lineLength" format="dimension" /> <!--线条长度 -->
     <attr name="lineWidth" format="dimension" /> <!--线条宽度-->
 
-    <attr name="dotSize" format="dimension" /> <!--小圆点大小 -->
+    <attr name="dotSize" format="dimension" /> <!--小圆点大小 直径-->
     <attr name="dotNum" format="integer"/> <!--小圆点个数 -->
     <attr name="dotColor" format="color" /> <!--小圆点颜色 -->
 
     <attr name="indicatorColor" format="color" /> <!--指示点颜色 -->
-    <attr name="indicatorSize" format="dimension" /> <!--指示点大小 -->
-    <attr name="indicatorPos" format="integer"/> <!--指示点位置 -->
+    <attr name="indicatorSize" format="dimension" /> <!--指示点大小 直径-->
+    <attr name="indicatorPos" format="integer"/> <!--指示点位置，从1开始，水平最左面为1，纵向最上面为1-->
 
     <attr name="duration" format="integer"/> <!--两点间移动动画时间 -->
 

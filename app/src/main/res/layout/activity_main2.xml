@@ -15,16 +15,18 @@
         android:layout_marginTop="15dp"
      />
     <com.duan.indicatorviewdemo.IndicatorView
-        android:id="@+id/indicator3"
+        android:id="@+id/main2_indicator2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        app:duration="1200"
+        app:IndicatorSwitchAnimation="translation"
 
         app:dotNum="5"
-        app:dotSize="4dp"
+        app:dotSize="10dp"
         app:indicatorPos="2"
-        app:indicatorSize="17dp"
-        app:lineLength="60dp" />
+        app:indicatorSize="30dp"
+        app:lineLength="70dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,32 +40,36 @@
             android:layout_height="wrap_content"
 
             app:dotNum="5"
-            app:dotSize="8dp"
-            app:indicatorPos="3"
-            app:indicatorSize="20dp"
+            app:dotSize="25dp"
+            app:indicatorPos="5"
+            app:indicatorSize="25dp"
             app:dotColor="@color/colorPrimaryDark"
             app:indicatorColor="@color/colorAccent"
             app:indicatorOrientation="vertical"
 
+            app:IndicatorSwitchAnimation="translation"
             app:duration="1200"
-            app:lineLength="80dp"
-            app:lineWidth="1dp" />
+            app:lineColor="#d6d6d6"
+            app:lineLength="85dp"
+            app:lineWidth="25dp" />
 
         <com.duan.indicatorviewdemo.IndicatorView
+            android:id="@+id/main2_indicator1"
             android:layout_marginLeft="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            app:duration="1500"
             app:dotNum="5"
             app:dotSize="20dp"
-            app:indicatorSize="20dp"
+            app:indicatorSize="30dp"
             app:dotColor="#a5b7b3"
             app:indicatorColor="#52ffda"
             app:indicatorOrientation="vertical"
 
             app:lineColor="#cacaca"
             app:lineLength="90dp"
-            app:lineWidth="1dp" />
+            app:lineWidth="2dp" />
     </LinearLayout>
 
 
