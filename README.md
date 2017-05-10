@@ -97,14 +97,14 @@
     //...
     }
 ```
-- v 1.3 2017-05-10：自定义指示点在各个位置的颜色，现在可以在打吗中设置指示点在指定位置的颜色，提供了三种方式为指示点设置颜色。
+- v 1.3 2017-05-10：自定义指示点在各个位置的颜色，现在可以在代码中设置指示点在指定位置的颜色，提供了三种方式为指示点设置颜色。
 
 1. `setIndicatorColor(int color)`：将指示点在各个位置的颜色全部设置为指定颜色
-2. `setIndicatorColor(int index, int color)`：修改指定位置处指示点的颜色
-3. `setIndicatorColor(int... colors)`：为多个指示点设置不同颜色
+2. `setIndicatorColor(int index, int color)`：修改指示点在指定位置处的颜色
+3. `setIndicatorColor(int... colors)`：为指示点指定在每一个位置的颜色
 
 此外还添加了一个方法控制在进行指示点切换时是否改变线段的颜色。
-`changeLineColorWhileSwitch(boolean chage)`
+`changeLineColorWhileSwitch(boolean chage)`，同时修正了小圆点和指示点实际大小与给定大小不一致的问题。
 
 使用示例
 ```java
