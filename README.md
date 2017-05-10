@@ -53,8 +53,8 @@
 ```
 具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器](http://blog.csdn.net/aimeimeiTS/article/details/69370853)
 #### 六.版本变化
-- v1.0 2017-04-03：初始化
-- v1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
+- v 1.0 2017-04-03：初始化
+- v 1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
 ``` xml
   app:indicatorOrientation="vertical"
 ```
@@ -62,36 +62,75 @@
 
 具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器——支持“纵向视图”](http://blog.csdn.net/aimeimeits/article/details/71158500)
 
-- v1.1.1 2017-05-05：添加指示点拖拽监听和指示点位置改变监听，在代码中设置监听器即可监听指示点拖拽时的位置改变（映射到的小圆点对应的位置），及其间距变化（与最左或最下的小圆点间的距离）。
+- v 1.2 2017-05-05：添加指示点拖拽监听和指示点位置改变监听，在代码中设置监听器即可监听指示点拖拽时的位置改变（映射到的小圆点对应的位置），及其间距变化（与最左或最下的小圆点间的距离）。
+使用示例
 ```java
-IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+ @Override
+    protected void onCreate(Bundle savedInstanceState) {
+    //...
+        IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
         indicator.setOnIndicatorSeekListener(new IndicatorView.OnIndicatorSeekListener() {
             @Override
             public void onSeekChange(IndicatorView view, int distance, int dotPos) {
                 Log.i(TAG, "onSeekChange: distance=" + distance + " dot=" + dotPos);
             }
-
+    
             @Override
             public void onStartTrackingTouch(IndicatorView view) {
                 Toast.makeText(MainActivity.this, "touched", Toast.LENGTH_SHORT).show();
             }
-
+    
             @Override
             public void onSopTrackingTouch(IndicatorView view) {
                 Toast.makeText(MainActivity.this, "touch leave", Toast.LENGTH_SHORT).show();
             }
         });
-
+    
         indicator.setOnIndicatorChangeListener(new IndicatorView.OnIndicatorChangeListener() {
             @Override
             public void onIndicatorChange(int currentPos, int oldPos) {
                 Log.i(TAG, "onIndicatorChange: cuPos=" + currentPos + " oldPos=" + oldPos);
             }
         });
+    //...
+    }
+```
+- v 1.3 2017-05-10：自定义指示点在各个位置的颜色，现在可以在打吗中设置指示点在指定位置的颜色，提供了三种方式为
+指示点设置颜色。
+1. `setIndicatorColor(int color)`：将指示点在各个位置的颜色全部设置为同一颜色
+2. `setIndicatorColor(int index, int color)`：修改指定位置处指示点的颜色
+3. `setIndicatorColor(int... colors)`：为所有指示点设置颜色
+此外还添加了一个方法控制在进行指示点切换时是否改变线段的颜色。
+`changeLineColorWhileSwitch(boolean chage)`
+
+使用示例
+```java
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+    //...
+    IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+    IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
+
+    indicator.setIndicatorColor(new int[]{
+            getResources().getColor(R.color.color_1),
+            getResources().getColor(R.color.color_2),
+            getResources().getColor(R.color.color_3),
+            getResources().getColor(R.color.color_4),
+            getResources().getColor(R.color.color_5)
+    });
+    //在进行指示点切换过程中不改变线段颜色
+    indicator.changeLineColorWhileSwitch(false);
+
+    indicator1.setIndicatorColor(0, getResources().getColor(R.color.color_1));
+    indicator1.setIndicatorColor(indicator2.getDotCount() - 1, getResources().getColor(R.color.yellow));
+    indicator1.setIndicatorColor(indicator2.getDotCount() / 2, getResources().getColor(R.color.color_5));
+
+    //...
+    }
 ```
 #### 七.未来的开发计划
 - [X] 添加**纵向视图**支持
 - [X] 添加指示点拖拽监听和指示点位置改变监听
-- [ ] 自定义指示点在各个位置的颜色
+- [X] 自定义指示点在各个位置的颜色
 
 #### 八.Q&A
