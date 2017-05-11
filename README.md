@@ -29,7 +29,8 @@
 - 通过代码动态修改部分属性
 - 通过代码获得属性值，如当前指示点位置，颜色等
 - 通过代码自定义指示点间切换动画，指示点被触摸的反馈动画及点击事件监听的回调
-#### 四.用途：
+
+#### 四.适用场景：
 
 #### 五.如何使用
 可以在布局文件中直接使用：
@@ -53,7 +54,7 @@
 ```
 具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器](http://blog.csdn.net/aimeimeiTS/article/details/69370853)
 #### 六.版本变化
-- v 1.0 2017-04-03：初始化
+- v 1.0 2017-04-03：
 - v 1.1 2017-05-04：添加**纵向视图**支持，现在可以在`xml`文件中通过指定`indicatorOrientation`属性为`vertical`使控件以纵向视图显示
 ``` xml
   app:indicatorOrientation="vertical"
@@ -63,6 +64,7 @@
 具体使用可参看博文：[自定义View和属性动画ValueAnimator实现圆点指示器——支持“纵向视图”](http://blog.csdn.net/aimeimeits/article/details/71158500)
 
 - v 1.2 2017-05-05：添加指示点拖拽监听和指示点位置改变监听，在代码中设置监听器即可监听指示点拖拽时的位置改变（映射到的小圆点对应的位置），及其间距变化（与最左或最下的小圆点间的距离）。
+
 使用示例
 ```java
  @Override
@@ -95,13 +97,14 @@
     //...
     }
 ```
-- v 1.3 2017-05-10：自定义指示点在各个位置的颜色，现在可以在打吗中设置指示点在指定位置的颜色，提供了三种方式为
-指示点设置颜色。
-1. `setIndicatorColor(int color)`：将指示点在各个位置的颜色全部设置为同一颜色
-2. `setIndicatorColor(int index, int color)`：修改指定位置处指示点的颜色
-3. `setIndicatorColor(int... colors)`：为所有指示点设置颜色
+- v 1.3 2017-05-10：自定义指示点在各个位置的颜色，现在可以在代码中设置指示点在指定位置的颜色，提供了三种方式为指示点设置颜色。
+
+1. `setIndicatorColor(int color)`：将指示点在各个位置的颜色全部设置为指定颜色
+2. `setIndicatorColor(int index, int color)`：修改指示点在指定位置处的颜色
+3. `setIndicatorColor(int... colors)`：为指示点指定在每一个位置的颜色
+
 此外还添加了一个方法控制在进行指示点切换时是否改变线段的颜色。
-`changeLineColorWhileSwitch(boolean chage)`
+`changeLineColorWhileSwitch(boolean chage)`，同时修正了小圆点和指示点实际大小与给定大小不一致的问题。
 
 使用示例
 ```java
@@ -128,6 +131,9 @@
     //...
     }
 ```
+
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorView/master/screenshot003.gif)
+
 #### 七.未来的开发计划
 - [X] 添加**纵向视图**支持
 - [X] 添加指示点拖拽监听和指示点位置改变监听
