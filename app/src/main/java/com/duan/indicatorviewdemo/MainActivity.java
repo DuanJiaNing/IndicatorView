@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         indicator.changeLineColorWhileSwitch(false);
 
         indicator1.setIndicatorColor(0, getResources().getColor(R.color.color_1));
-        indicator1.setIndicatorColor(indicator2.getDotCount() - 1, getResources().getColor(R.color.yellow));
-        indicator1.setIndicatorColor(indicator2.getDotCount() / 2, getResources().getColor(R.color.color_5));
+        indicator1.setIndicatorColor(indicator1.getDotCount() - 1, getResources().getColor(R.color.yellow));
+        indicator1.setIndicatorColor(indicator1.getDotCount() / 2, getResources().getColor(R.color.color_5));
 
 
 //        setContentView(R.layout.activity_main);

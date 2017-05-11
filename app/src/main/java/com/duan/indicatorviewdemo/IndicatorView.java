@@ -14,8 +14,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Arrays;
-
 /**
  * Created by DuanJiaNing on 2017/4/3.
  */
@@ -68,6 +66,8 @@ public class IndicatorView extends View {
 
     /**
      * 上下左右边界
+     * 由 clickableAreas 定义的边界
+     * 拖拽指示点离开上下边界（左右边界）时，使 switchTo 值为边界点的下标，防止数组越界。
      */
     private int mBorderTop;
     private int mBorderBottom;
@@ -264,6 +264,9 @@ public class IndicatorView extends View {
         mIndicatorPos = mIndicatorPos == 0 ? 0 : mIndicatorPos - 1;
         mLineVisible = array.getBoolean(R.styleable.IndicatorView_lineVisible, true);
 
+        //释放资源
+        array.recycle();
+
         mIndicatorColors = new int[mDotCount];
         for (int i = 0; i < mIndicatorColors.length; i++) {
             mIndicatorColors[i] = mIndicatorColor;
@@ -308,6 +311,9 @@ public class IndicatorView extends View {
                 height = getPaddingTop() + mIndicatorSize + getPaddingBottom();
         }
 
+        width = Math.max(width, getMinimumWidth());
+        height = Math.max(height, getMinimumHeight());
+
         setMeasuredDimension(width, height);
 
     }
@@ -325,15 +331,15 @@ public class IndicatorView extends View {
             mBorderRight = mBorderLeft + mLineLength * (mDotCount - 1);
         }
 
-        //getHeight方法在onDraw方法中会取到错误的值
+        //在 onLayout 中获取 View 的测量高和测量宽
         if (indicatorHolder != null) {
             indicatorHolder.setColor(mIndicatorColors[mIndicatorPos]);
             if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向
-                indicatorHolder.setCenterX(getWidth() / 2);
+                indicatorHolder.setCenterX(getMeasuredWidth() / 2);
                 indicatorHolder.setCenterY(mIndicatorPos * mLineLength + getPaddingBottom() + mIndicatorSize / 2);
             } else {
                 indicatorHolder.setCenterX(mIndicatorPos * mLineLength + getPaddingLeft() + mIndicatorSize / 2);
-                indicatorHolder.setCenterY(getHeight() / 2);
+                indicatorHolder.setCenterY(getMeasuredHeight() / 2);
             }
             indicatorHolder.setHeight(mIndicatorSize);
             indicatorHolder.setWidth(mIndicatorSize);
@@ -857,6 +863,7 @@ public class IndicatorView extends View {
 
     /**
      * 在进行指示点切换过程中是否改变线段颜色
+     *
      * @param chage false 为不改变
      */
     public void changeLineColorWhileSwitch(boolean chage) {

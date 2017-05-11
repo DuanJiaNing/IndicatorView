@@ -22,6 +22,7 @@
         app:duration="1200"
         app:IndicatorSwitchAnimation="translation"
 
+        android:minHeight="100dp"
         app:dotNum="5"
         app:dotSize="10dp"
         app:indicatorPos="2"
