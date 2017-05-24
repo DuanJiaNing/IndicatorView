@@ -9,67 +9,64 @@
     android:padding="16dp"
     tools:context="com.duan.indicatorviewdemo.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-     />
     <com.duan.indicatorviewdemo.IndicatorView
+        android:layout_gravity="left"
         android:id="@+id/main2_indicator2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
         app:duration="1200"
         app:IndicatorSwitchAnimation="translation"
 
-        android:minHeight="100dp"
         app:dotNum="5"
         app:dotSize="10dp"
         app:indicatorPos="2"
         app:indicatorSize="30dp"
-        app:lineLength="70dp" />
+        app:lineLength="50dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:gravity="center"
-        >
+        android:orientation="horizontal">
+
         <com.duan.indicatorviewdemo.IndicatorView
+            android:layout_gravity="top"
             android:id="@+id/main2_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
+            app:IndicatorSwitchAnimation="translation"
+            app:dotColor="#00aeff"
             app:dotNum="5"
             app:dotSize="25dp"
-            app:indicatorPos="5"
-            app:indicatorSize="25dp"
-            app:dotColor="@color/colorPrimaryDark"
-            app:indicatorColor="@color/colorAccent"
+            app:duration="1200"
+            app:indicatorColor="#ff0088"
             app:indicatorOrientation="vertical"
 
-            app:IndicatorSwitchAnimation="translation"
-            app:duration="1200"
-            app:lineColor="#d6d6d6"
-            app:lineLength="85dp"
+            app:indicatorPos="5"
+            app:indicatorSize="25dp"
+            app:lineColor="#d7d7d7"
+            app:lineLength="50dp"
             app:lineWidth="25dp" />
 
         <com.duan.indicatorviewdemo.IndicatorView
+            android:layout_gravity="bottom"
             android:id="@+id/main2_indicator1"
-            android:layout_marginLeft="30dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
 
-            app:duration="1500"
+            app:dotColor="#a5b7b3"
             app:dotNum="5"
             app:dotSize="20dp"
-            app:indicatorSize="30dp"
-            app:dotColor="#a5b7b3"
+            app:duration="1500"
             app:indicatorColor="#52ffda"
             app:indicatorOrientation="vertical"
+            app:indicatorSize="30dp"
 
             app:lineColor="#cacaca"
-            app:lineLength="90dp"
+            app:lineLength="60dp"
             app:lineWidth="2dp" />
     </LinearLayout>
 

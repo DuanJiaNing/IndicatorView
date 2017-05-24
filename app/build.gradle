@@ -5,15 +5,11 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.duan.indicatorviewdemao"
-        minSdkVersion 21
+        minSdkVersion 11
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        jackOptions {
-            enabled true;
-        }
 
     }
     buildTypes {
@@ -23,8 +19,8 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility 1.7
+        sourceCompatibility 1.7
     }
 }
 

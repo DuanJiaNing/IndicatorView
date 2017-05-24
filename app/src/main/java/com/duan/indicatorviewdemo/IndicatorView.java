@@ -2,6 +2,7 @@ package com.duan.indicatorviewdemo;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -9,6 +10,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -68,6 +71,7 @@ public class IndicatorView extends View {
      * 上下左右边界
      * 由 clickableAreas 定义的边界
      * 拖拽指示点离开上下边界（左右边界）时，使 switchTo 值为边界点的下标，防止数组越界。
+     * 手机屏幕左上角向下为上，向右为右
      */
     private int mBorderTop;
     private int mBorderBottom;
@@ -109,7 +113,6 @@ public class IndicatorView extends View {
      */
     private int tempLineColor;
 
-    @FunctionalInterface
     public interface OnDotClickListener {
         /**
          * 小圆点点击事件监听（点击的小圆点不是当前指示点所在位置时才会回调）
@@ -120,7 +123,6 @@ public class IndicatorView extends View {
         void onDotClickChange(View v, int position);
     }
 
-    @FunctionalInterface
     public interface OnIndicatorPressAnimator {
         /**
          * 自定义指示点挤压时的属性动画
@@ -132,7 +134,6 @@ public class IndicatorView extends View {
         AnimatorSet onIndicatorPress(IndicatorView view, IndicatorHolder target);
     }
 
-    @FunctionalInterface
     public interface OnIndicatorSwitchAnimator {
         /**
          * 自定义指示点切换时的属性动画
@@ -174,7 +175,6 @@ public class IndicatorView extends View {
 
     }
 
-    @FunctionalInterface
     public interface OnIndicatorChangeListener {
         /**
          * 指示点所在位置改变时回调
@@ -311,8 +311,15 @@ public class IndicatorView extends View {
                 height = getPaddingTop() + mIndicatorSize + getPaddingBottom();
         }
 
-        width = Math.max(width, getMinimumWidth());
-        height = Math.max(height, getMinimumHeight());
+
+        //兼容 api 11
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            width = Math.max(width, getMinimumWidth());
+            height = Math.max(height, getMinimumHeight());
+        } else {
+            width = Math.max(width, widthSize);
+            height = Math.max(height, heightSize);
+        }
 
         setMeasuredDimension(width, height);
 
@@ -352,16 +359,16 @@ public class IndicatorView extends View {
     private void drawLine(Canvas canvas) {
         mPaint.setColor(mLineColor);
 
-        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向，从下往上绘制
+        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) { //纵向，从上往下绘制
             for (int i = 0; i < mDotCount - 1; i++) {
-                int top = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * (i + 1));
-                int bottom = getHeight() - (getPaddingBottom() + mIndicatorSize / 2 + mLineLength * i);
+                int top = getPaddingTop() + mIndicatorSize / 2 + mLineLength * (i + 1);
+                int bottom = getPaddingTop() + mIndicatorSize / 2 + mLineLength * i;
                 int left = (getWidth() - mLineWidth) / 2;
                 int right = (getWidth() + mLineWidth) / 2;
 
                 canvas.drawRect(left, top, right, bottom, mPaint);
             }
-        } else { //纵向，从左往右绘制
+        } else { //横向，从左往右绘制
             for (int i = 0; i < mDotCount - 1; i++) {
                 int top = (getHeight() - mLineWidth) / 2;
                 int bottom = (getHeight() + mLineWidth) / 2;
@@ -392,7 +399,7 @@ public class IndicatorView extends View {
                 clickableAreas[i][0] = cx;
                 clickableAreas[i][1] = cy;
             }
-        } else {
+        } else {//横向，从左往右绘制
             for (int i = 0; i < clickableAreas.length; i++) {
                 int cx = i * mLineLength + getPaddingLeft() + mIndicatorSize / 2;
                 int cy = getHeight() / 2;
@@ -414,13 +421,28 @@ public class IndicatorView extends View {
         mPaint.setColor(indicatorHolder.getColor());
         mPaint.setAlpha(indicatorHolder.getAlpha());
 
-        canvas.drawOval(
-                indicatorHolder.getCenterX() - indicatorHolder.getWidth() / 2,
-                indicatorHolder.getCenterY() - indicatorHolder.getHeight() / 2,
-                indicatorHolder.getCenterX() + indicatorHolder.getWidth() / 2,
-                indicatorHolder.getCenterY() + indicatorHolder.getHeight() / 2,
-                mPaint
-        );
+//        canvas.drawOval(
+//                indicatorHolder.getCenterX() - indicatorHolder.getWidth() / 2,
+//                indicatorHolder.getCenterY() - indicatorHolder.getHeight() / 2,
+//                indicatorHolder.getCenterX() + indicatorHolder.getWidth() / 2,
+//                indicatorHolder.getCenterY() + indicatorHolder.getHeight() / 2,
+//                mPaint
+//        );
+//
+
+        float left = indicatorHolder.getCenterX() - indicatorHolder.getWidth() / 2;
+        float top = indicatorHolder.getCenterY() - indicatorHolder.getHeight() / 2;
+        float right = indicatorHolder.getCenterX() + indicatorHolder.getWidth() / 2;
+        float bottom = indicatorHolder.getCenterY() + indicatorHolder.getHeight() / 2;
+
+        //兼容 api 11，不使用 canvas.drawOval
+        RectF rectF = new RectF();
+        rectF.left = left;
+        rectF.top = top;
+        rectF.right = right;
+        rectF.bottom = bottom;
+
+        canvas.drawOval(rectF, mPaint);
     }
 
     @Override
@@ -457,45 +479,48 @@ public class IndicatorView extends View {
         int ey = (int) event.getY();
         int temp = mLineLength / 2;
         switchTo = 0;
+        boolean inBound = false;
         //判断当前手指所在的小圆点是哪个
         if (mIndicatorOrientation != INDICATOR_ORIENTATION_VERTICAL) { //横向
             for (; switchTo < mDotCount; switchTo++) {
                 int[] xy = clickableAreas[switchTo];
                 //只对x坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
                 if (ex <= xy[0] + temp && ex >= xy[0] - temp) {
+                    inBound = true;
                     break;
                 }
             }
+
+            //在边界外点击，并且没有拖拽时不接受触摸事件
+            if (!inBound && !haveIndicatorDraged)
+                return false;
+
             //超出边界时要检查
             if (switchTo == mDotCount)
                 if (indicatorHolder.getCenterX() > mBorderRight)
                     switchTo -= 1;
                 else
                     switchTo = 0;
+
         } else {
             for (; switchTo < mDotCount; switchTo++) {
                 int[] xy = clickableAreas[switchTo];
                 //只对y坐标位置进行判断，这样即使用户手指在控件外面（先在控件内触摸后不抬起而是滑到控件外面）滑动也能判断
                 if (ey <= xy[1] + temp && ey >= xy[1] - temp) {
+                    inBound = true;
                     break;
                 }
             }
+
+            if (!inBound && !haveIndicatorDraged)
+                return false;
+
             if (switchTo == mDotCount)
                 if (indicatorHolder.getCenterY() > mBorderTop)
                     switchTo -= 1;
                 else
                     switchTo = 0;
-
         }
-
-        //判断是否到达边界（速度慢）
-//        if (mIndicatorOrientation == INDICATOR_ORIENTATION_VERTICAL) {
-//            if (ey > mBorderBottom || ey < mBorderTop)
-//                return true;
-//        } else {
-//            if (ex > mBorderRight || ex < mBorderLeft)
-//                return true;
-//        }
 
         if (switchTo != switchToTemp && switchTo != mIndicatorPos) {
             if (mChangeListener != null)
@@ -558,7 +583,14 @@ public class IndicatorView extends View {
             //颜色渐变
             int terminalColor = mIndicatorColor;
             int centerColor = mDotColor;
-            ValueAnimator colorAnim = ObjectAnimator.ofArgb(indicatorHolder, "color", terminalColor, centerColor, terminalColor);
+            ValueAnimator colorAnim = null;
+            // ofArgb 方法需要做兼容性处理
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                colorAnim = ObjectAnimator.ofArgb(indicatorHolder, "color", terminalColor, centerColor, terminalColor);
+            } else {
+                colorAnim = ObjectAnimator.ofInt(indicatorHolder, "color", terminalColor, centerColor, terminalColor);
+                colorAnim.setEvaluator(new ArgbEvaluator());
+            }
 
             AnimatorSet defaultIndicatorPressAnim = new AnimatorSet();
             defaultIndicatorPressAnim.addListener(new Animator.AnimatorListener() {
@@ -646,7 +678,12 @@ public class IndicatorView extends View {
         //颜色渐变
         int startColor = indicatorHolder.getColor();
         int endColor = mIndicatorColors[switchTo];
-        colorAnim = ObjectAnimator.ofArgb(indicatorHolder, "color", startColor, endColor);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            colorAnim = ObjectAnimator.ofArgb(indicatorHolder, "color", startColor, endColor);
+        } else {
+            colorAnim = ObjectAnimator.ofInt(indicatorHolder, "color", startColor, endColor);
+            colorAnim.setEvaluator(new ArgbEvaluator());
+        }
 
         AnimatorSet movingAnim = new AnimatorSet();
         movingAnim.setDuration(mDuration);

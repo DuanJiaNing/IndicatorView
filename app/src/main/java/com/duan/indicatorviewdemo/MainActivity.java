@@ -1,6 +1,7 @@
 package com.duan.indicatorviewdemo;
 
 import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
@@ -69,11 +70,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                indicator1.post(() -> {
-                    indicator1.setIndicatorPos(random.nextInt(indicator1.getDotCount()));
-                    indicator1.setIndicatorColor(Utils.getRandomColor());
-                    indicator1.setDotColor(Utils.getRandomColor_d());
-                    indicator1.setIndicatorSwitchAnim(random.nextInt(IndicatorView.INDICATOR_SWITCH_ANIM_SQUEEZE + 1));
+                indicator1.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        indicator1.setIndicatorPos(random.nextInt(indicator1.getDotCount()));
+                        indicator1.setIndicatorColor(Utils.getRandomColor());
+                        indicator1.setDotColor(Utils.getRandomColor_d());
+                        indicator1.setIndicatorSwitchAnim(random.nextInt(IndicatorView.INDICATOR_SWITCH_ANIM_SQUEEZE + 1));
+
+                    }
                 });
             }
         }, 2000, 2000);
@@ -82,69 +87,95 @@ public class MainActivity extends AppCompatActivity {
 
     //不可点击+自定义指示点触摸动画
     private void execuInV2() {
-        indicator2.setOnIndicatorPressAnimator((IndicatorView view, IndicatorView.IndicatorHolder target) -> {
-            int terminalColor = indicator2.getIndicatorColor();
-            int centerColor = Color.RED;
-            int centerColor2 = Color.BLUE;
-            ValueAnimator animator = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, centerColor2, terminalColor);
+        indicator2.setOnIndicatorPressAnimator(new IndicatorView.OnIndicatorPressAnimator() {
+            @Override
+            public AnimatorSet onIndicatorPress(IndicatorView view, IndicatorView.IndicatorHolder target) {
+                int terminalColor = indicator2.getIndicatorColor();
+                int centerColor = Color.RED;
+                int centerColor2 = Color.BLUE;
+                ValueAnimator animator = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    animator = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, centerColor2, terminalColor);
+                } else {
+                    animator =  ObjectAnimator.ofInt(target,"color", terminalColor, centerColor, centerColor2, terminalColor);
+                    animator.setEvaluator(new ArgbEvaluator());
+                }
 
-            int terminalSize = indicator2.getIndicatorPixeSize();
-            int centerSize = indicator2.getIndicatorPixeSize() * 2;
-            ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
-            ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
+                int terminalSize = indicator2.getIndicatorPixeSize();
+                int centerSize = indicator2.getIndicatorPixeSize() * 2;
+                ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
+                ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
 
-            AnimatorSet set = new AnimatorSet();
-            set.play(animator).with(animatorH).with(animatorW);
-            set.setDuration(1000); //播放时为700
+                AnimatorSet set = new AnimatorSet();
+                set.play(animator).with(animatorH).with(animatorW);
+                set.setDuration(1000); //播放时为700
 
-            return set;
+                return set;
+            }
         });
+
 
     }
 
     //线条不可见(线条长度仍需指定)+自定义指示点切换动画
     private void execuInV3() {
+        indicator3.setOnIndicatorSwitchAnimator(new IndicatorView.OnIndicatorSwitchAnimator() {
+            @Override
+            public AnimatorSet onIndicatorSwitch(IndicatorView view, IndicatorView.IndicatorHolder target) {
+                int terminalAlpha = 255;
+                int centerAlpha = 0;
+                ValueAnimator alphaAnim = ObjectAnimator.ofInt(target, "alpha", terminalAlpha, centerAlpha, terminalAlpha);
 
-        indicator3.setOnIndicatorSwitchAnimator((IndicatorView view, IndicatorView.IndicatorHolder target) -> {
-            int terminalAlpha = 255;
-            int centerAlpha = 0;
-            ValueAnimator alphaAnim = ObjectAnimator.ofInt(target, "alpha", terminalAlpha, centerAlpha, terminalAlpha);
+                int terminalSize = indicator3.getIndicatorPixeSize();
+                int centerSize = 0;
+                ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
+                ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
 
-            int terminalSize = indicator3.getIndicatorPixeSize();
-            int centerSize = 0;
-            ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
-            ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
+                AnimatorSet set = new AnimatorSet();
+                set.play(alphaAnim).with(animatorH).with(animatorW);
+                set.setDuration(500);
 
-            AnimatorSet set = new AnimatorSet();
-            set.play(alphaAnim).with(animatorH).with(animatorW);
-            set.setDuration(500);
-
-            return set;
+                return set;
+            }
         });
 
     }
 
     //自定义指示点切换动画+监听点击事件+不可拖拽
     private void execuInV4() {
-        indicator4.setOnDotClickListener((View v, int position) -> Toast.makeText(this, "点击了 " + position, Toast.LENGTH_SHORT).show());
-        indicator4.setOnIndicatorSwitchAnimator((IndicatorView view, IndicatorView.IndicatorHolder target) -> {
-
-            int terminalColor = indicator4.getIndicatorColor();
-            int centerColor = indicator4.getDotColor();
-            ValueAnimator colorAnim = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, terminalColor);
-
-            int terminalSize = indicator4.getIndicatorPixeSize();
-            int centerSize = indicator4.getIndicatorPixeSize() * 3 / 2;
-            ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
-            ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
-
-            AnimatorSet set = new AnimatorSet();
-            set.play(colorAnim).with(animatorH).with(animatorW);
-            set.setDuration(500);
-
-            return set;
+        indicator4.setOnDotClickListener(new IndicatorView.OnDotClickListener() {
+            @Override
+            public void onDotClickChange(View v, int position) {
+                Toast.makeText(MainActivity.this, "点击了 " + position, Toast.LENGTH_SHORT).show();
+            }
         });
+        indicator4.setOnIndicatorSwitchAnimator(new IndicatorView.OnIndicatorSwitchAnimator() {
+            @Override
+            public AnimatorSet onIndicatorSwitch(IndicatorView view, IndicatorView.IndicatorHolder target) {
 
+                int terminalColor = indicator4.getIndicatorColor();
+                int centerColor = indicator4.getDotColor();
+                ValueAnimator colorAnim = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    colorAnim = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, terminalColor);
+                } else {
+                    colorAnim =  ObjectAnimator.ofInt(target,"color",terminalColor,centerColor,terminalColor);
+                    colorAnim.setEvaluator(new ArgbEvaluator());
+                }
+
+                int terminalSize = indicator4.getIndicatorPixeSize();
+                int centerSize = indicator4.getIndicatorPixeSize() * 3 / 2;
+                ValueAnimator animatorH = ObjectAnimator.ofInt(target, "height", terminalSize, centerSize, terminalSize);
+                ValueAnimator animatorW = ObjectAnimator.ofInt(target, "width", terminalSize, centerSize, terminalSize);
+
+                AnimatorSet set = new AnimatorSet();
+                set.play(colorAnim).with(animatorH).with(animatorW);
+                set.setDuration(500);
+
+                return set;
+
+            }
+        });
     }
 
 }
