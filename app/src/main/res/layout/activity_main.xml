@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="默认" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -24,7 +24,7 @@
         android:layout_marginTop="15dp"
         android:text="代码动态指定属性+不可点击+不可拖拽" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:id="@+id/indicator1"
 
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
         android:layout_marginTop="15dp"
         android:text="不可点击+自定义指示点触摸动画" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:id="@+id/indicator2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
         android:layout_marginTop="15dp"
         android:text="线条不可见(线条长度仍需指定)+自定义指示点切换动画" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:id="@+id/indicator3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         android:layout_marginTop="15dp"
         android:text="自定义指示点切换动画+监听点击事件+不可拖拽" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:id="@+id/indicator4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
         android:layout_marginTop="15dp"
         android:text="使用默认的“挤扁”动画" />
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 

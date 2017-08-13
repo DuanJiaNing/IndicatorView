@@ -1,4 +1,4 @@
-package com.duan.indicatorviewdemo;
+package com.duan.indicatorview;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;

@@ -5,17 +5,13 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
-import java.util.Arrays;
+import com.duan.indicatorview.IndicatorView;
+
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -97,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     animator = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, centerColor2, terminalColor);
                 } else {
-                    animator =  ObjectAnimator.ofInt(target,"color", terminalColor, centerColor, centerColor2, terminalColor);
+                    animator = ObjectAnimator.ofInt(target, "color", terminalColor, centerColor, centerColor2, terminalColor);
                     animator.setEvaluator(new ArgbEvaluator());
                 }
 
@@ -159,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     colorAnim = ObjectAnimator.ofArgb(target, "color", terminalColor, centerColor, terminalColor);
                 } else {
-                    colorAnim =  ObjectAnimator.ofInt(target,"color",terminalColor,centerColor,terminalColor);
+                    colorAnim = ObjectAnimator.ofInt(target, "color", terminalColor, centerColor, terminalColor);
                     colorAnim.setEvaluator(new ArgbEvaluator());
                 }
 

@@ -35,7 +35,7 @@
 #### 五.如何使用
 可以在布局文件中直接使用：
 ``` xml
-      <com.duan.indicatorviewdemo.IndicatorView
+      <com.duan.library.IndicatorView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 

@@ -9,7 +9,7 @@
     android:padding="16dp"
     tools:context="com.duan.indicatorviewdemo.MainActivity">
 
-    <com.duan.indicatorviewdemo.IndicatorView
+    <com.duan.indicatorview.IndicatorView
         android:layout_gravity="left"
         android:id="@+id/main2_indicator2"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.duan.indicatorviewdemo.IndicatorView
+        <com.duan.indicatorview.IndicatorView
             android:layout_gravity="top"
             android:id="@+id/main2_indicator"
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
             app:lineLength="50dp"
             app:lineWidth="25dp" />
 
-        <com.duan.indicatorviewdemo.IndicatorView
+        <com.duan.indicatorview.IndicatorView
             android:layout_gravity="bottom"
             android:id="@+id/main2_indicator1"
             android:layout_width="wrap_content"
