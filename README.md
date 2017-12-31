@@ -106,6 +106,49 @@
 此外还添加了一个方法控制在进行指示点切换时是否改变线段的颜色。
 `changeLineColorWhileSwitch(boolean chage)`，同时修正了小圆点和指示点实际大小与给定大小不一致的问题。
 
+- v 1.4 2017-12-31：动态修改圆点个数
+添加了两个方法用以动态修改圆点个数
+```java
+
+    /**
+     * 动态修改圆点个数，如果圆点个数增加，那么指示点位置被保留；减小且原先指示位置大于新圆点个数时最后一个位置成为指示点
+     *
+     * @param count 新的圆点个数
+     */
+    public void setDotCount(int count) {
+        setDotCount(count, count <= mIndicatorPos ? count : mIndicatorPos);
+    }
+
+    /**
+     * 动态修改指示点个数，指定新的指示点位置
+     *
+     * @param count        新的圆点个数
+     * @param indicatorPos 指示点位置 1 ~ count
+     */
+    public void setDotCount(int count, int indicatorPos) {
+
+        if (count >= minDotNum && count <= maxDotCount && count != mDotCount) {
+            //注意：如果将mDotCount变小，那么指定指示点的自定义颜色会丢失
+            mIndicatorColors = Arrays.copyOf(mIndicatorColors, count);
+            if (count > mDotCount) {
+                Arrays.fill(mIndicatorColors, mDotCount - 1, count, mIndicatorColor);
+            }
+
+            mDotCount = count;
+            if (indicatorPos >= 1 && indicatorPos <= count) {
+                mIndicatorPos = indicatorPos - 1;
+            }
+
+            clickableAreas = new int[mDotCount][2];
+            this.requestLayout();
+        }
+
+    }
+
+```
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorView/master/screenshot004.gif)
+
+
 使用示例
 ```java
 @Override
@@ -141,5 +184,6 @@
 - [X] 添加**纵向视图**支持
 - [X] 添加指示点拖拽监听和指示点位置改变监听
 - [X] 自定义指示点在各个位置的颜色
+- [X] 动态修改圆点个数
 
 #### 八.Q&A

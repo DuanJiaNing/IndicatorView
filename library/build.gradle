@@ -1,17 +1,28 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-buildscript {
+allprojects {
     repositories {
         jcenter()
+        mavenCentral()
     }
-    dependencies {
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.0.0" // Remove it if you won't to publish SNAPSHOT version.
+    //加上这些
+    tasks.withType(Javadoc) {
+        options{ encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
     }
 }
-apply plugin: 'com.android.library'
-apply from: 'bintray.gradle'
 
+publish {
+    userOrg = 'duan'      //bintray注册的用户名
+    groupId = 'com.duan'         //compile引用时的第1部分groupId
+    artifactId = 'IndicatorView'     //compile引用时的第2部分项目名
+    publishVersion = '1.0.1'    //compile引用时的第3部分版本号
+    desc = 'indicator for android widget like view pager , list or other selectable.'
+    website = 'https://github.com/DuanJiaNing/IndicatorView'
+}
 
 android {
     compileSdkVersion 26
@@ -20,7 +31,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName PROJ_VERSION
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -31,6 +42,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    android {
+        lintOptions {
+            abortOnError false
+        }
+    }
+
 }
 
 dependencies {
@@ -41,3 +58,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     testCompile 'junit:junit:4.12'
 }
+
+//gradlew clean build bintrayUpload -PbintrayUser=duanjianing -PbintrayKey=bd5b56e0c4e1f9aaacbd2881751607c50501648b -PdryRun=false
+
+//通过配置我们最后的依赖地址=第一部分+第二部分+第三部分；
+//compile  'com.wzgiceman:RxBus:1.0.1'

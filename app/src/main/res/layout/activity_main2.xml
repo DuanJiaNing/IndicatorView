@@ -10,19 +10,25 @@
     tools:context="com.duan.indicatorviewdemo.MainActivity">
 
     <com.duan.indicatorview.IndicatorView
-        android:layout_gravity="left"
         android:id="@+id/main2_indicator2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="left"
 
-        app:duration="1200"
         app:IndicatorSwitchAnimation="translation"
-
         app:dotNum="5"
+
         app:dotSize="10dp"
+        app:duration="1200"
         app:indicatorPos="2"
         app:indicatorSize="30dp"
         app:lineLength="50dp" />
+
+    <Button
+        android:id="@+id/changeCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="修改dotCount" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,10 +37,10 @@
         android:orientation="horizontal">
 
         <com.duan.indicatorview.IndicatorView
-            android:layout_gravity="top"
             android:id="@+id/main2_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
 
             app:IndicatorSwitchAnimation="translation"
             app:dotColor="#00aeff"
@@ -51,10 +57,10 @@
             app:lineWidth="25dp" />
 
         <com.duan.indicatorview.IndicatorView
-            android:layout_gravity="bottom"
             android:id="@+id/main2_indicator1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="bottom"
             android:layout_marginLeft="30dp"
 
             app:dotColor="#a5b7b3"

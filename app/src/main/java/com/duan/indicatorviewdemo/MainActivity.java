@@ -7,6 +7,7 @@ import android.animation.ValueAnimator;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,8 +30,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
-        IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
+        final IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+        final IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
+        final IndicatorView indicator2 = (IndicatorView) findViewById(R.id.main2_indicator2);
 
         indicator.setIndicatorColor(new int[]{
                 getResources().getColor(R.color.color_1),
@@ -45,6 +47,18 @@ public class MainActivity extends AppCompatActivity {
         indicator1.setIndicatorColor(indicator1.getDotCount() - 1, getResources().getColor(R.color.yellow));
         indicator1.setIndicatorColor(indicator1.getDotCount() / 2, getResources().getColor(R.color.color_5));
 
+        findViewById(R.id.changeCount).setOnClickListener(new View.OnClickListener() {
+            Random r = new Random();
+
+            @Override
+            public void onClick(View view) {
+                int count = r.nextInt(6) + 2;
+                int pos = r.nextInt(count) + 1;
+                indicator.setDotCount(count, pos);
+                indicator2.setDotCount(count);
+                Toast.makeText(MainActivity.this, "count=" + count + " pos=" + pos, Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        setContentView(R.layout.activity_main);
 //        indicator1 = (IndicatorView) findViewById(R.id.indicator1);

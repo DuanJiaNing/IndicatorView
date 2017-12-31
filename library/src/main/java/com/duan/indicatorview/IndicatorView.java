@@ -14,8 +14,13 @@ import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.Arrays;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by DuanJiaNing on 2017/4/3.
@@ -267,13 +272,14 @@ public class IndicatorView extends View {
         //释放资源
         array.recycle();
 
+        mPaint = new Paint();
+        indicatorHolder = new IndicatorHolder();
         mIndicatorColors = new int[mDotCount];
         for (int i = 0; i < mIndicatorColors.length; i++) {
             mIndicatorColors[i] = mIndicatorColor;
         }
-        mPaint = new Paint();
         clickableAreas = new int[mDotCount][2];
-        indicatorHolder = new IndicatorHolder();
+
 
     }
 
@@ -288,10 +294,9 @@ public class IndicatorView extends View {
 
         //默认的小圆点触摸反馈动画会放大小圆点，多留些空间给缩放动画（
         // 如果你发现你的小圆点在一些情况下显示不全时可在xml中增大padding或修改下面两个变量的值
-        int expandTerminalPadding = getPaddingLeft() + mIndicatorSize / 6;//左右两端
-        int expandSidePadding = getPaddingTop() + mIndicatorSize / 5;//上下两侧
-
-        setPadding(expandTerminalPadding, expandSidePadding, expandTerminalPadding, expandSidePadding);
+//        int expandTerminalPadding = getPaddingLeft() + mIndicatorSize / 6;//左右两端
+//        int expandSidePadding = getPaddingTop() + mIndicatorSize / 5;//上下两侧
+//        setPadding(expandTerminalPadding, expandSidePadding, expandTerminalPadding, expandSidePadding);
 
         if (widthMode == MeasureSpec.EXACTLY) {
             width = widthSize;
@@ -957,6 +962,41 @@ public class IndicatorView extends View {
             this.mIndicatorSwitchAnim = anim;
     }
 
+    /**
+     * 动态修改圆点个数，如果圆点个数增加，那么指示点位置被保留；减小且原先指示位置大于新圆点个数时最后一个位置成为指示点
+     *
+     * @param count 新的圆点个数
+     */
+    public void setDotCount(int count) {
+        setDotCount(count, count <= mIndicatorPos ? count : mIndicatorPos);
+    }
+
+    /**
+     * 动态修改指示点个数，指定新的指示点位置
+     *
+     * @param count        新的圆点个数
+     * @param indicatorPos 指示点位置 1 ~ count
+     */
+    public void setDotCount(int count, int indicatorPos) {
+
+        if (count >= minDotNum && count <= maxDotCount && count != mDotCount) {
+            //注意：如果将mDotCount变小，那么指定指示点的自定义颜色会丢失
+            mIndicatorColors = Arrays.copyOf(mIndicatorColors, count);
+            if (count > mDotCount) {
+                Arrays.fill(mIndicatorColors, mDotCount - 1, count, mIndicatorColor);
+            }
+
+            mDotCount = count;
+            if (indicatorPos >= 1 && indicatorPos <= count) {
+                mIndicatorPos = indicatorPos - 1;
+            }
+
+            clickableAreas = new int[mDotCount][2];
+            this.requestLayout();
+        }
+
+    }
+
     public int getDotColor() {
         return mDotColor;
     }
@@ -989,6 +1029,8 @@ public class IndicatorView extends View {
      * 获得指示点的颜色值，该颜色值只有在 xml 中指定或调用{@link #setIndicatorColor(int color)}方法时才会改变
      * 如果你想获得当前指示点的颜色值应使用{@link #getCurrentIndicatorColor()}或
      * 使用{@link #getIndicatorColors()}方法获得所有指示点在对应位置的颜色值
+     *
+     * @return 颜色
      */
     @Deprecated
     public int getIndicatorColor() {
