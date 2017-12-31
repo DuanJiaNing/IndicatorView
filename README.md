@@ -106,7 +106,38 @@
 此外还添加了一个方法控制在进行指示点切换时是否改变线段的颜色。
 `changeLineColorWhileSwitch(boolean chage)`，同时修正了小圆点和指示点实际大小与给定大小不一致的问题。
 
-- v 1.4 2017-12-31：动态修改圆点个数
+使用示例
+```java
+@Override
+    protected void onCreate(Bundle savedInstanceState) {
+    //...
+    IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
+    IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
+
+    indicator.setIndicatorColor(new int[]{
+            getResources().getColor(R.color.color_1),
+            getResources().getColor(R.color.color_2),
+            getResources().getColor(R.color.color_3),
+            getResources().getColor(R.color.color_4),
+            getResources().getColor(R.color.color_5)
+    });
+    //在进行指示点切换过程中不改变线段颜色
+    indicator.changeLineColorWhileSwitch(false);
+
+    indicator1.setIndicatorColor(0, getResources().getColor(R.color.color_1));
+    indicator1.setIndicatorColor(indicator2.getDotCount() - 1, getResources().getColor(R.color.yellow));
+    indicator1.setIndicatorColor(indicator2.getDotCount() / 2, getResources().getColor(R.color.color_5));
+
+    //...
+    }
+```
+
+![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorView/master/screenshot003.gif)
+
+
+- v 1.4 2017-05-24：适配 API 11 ，修复 match_parent 时绘制线段和小圆点顺序不一致（纵向时的从上往下和从下往上）导致的错位问题，同时修复 match_parent 模式下，不在可点击范围内点击时指示点依然有触摸回馈的错误。
+
+- v 1.5 2017-12-31：动态修改圆点个数<br>
 添加了两个方法用以动态修改圆点个数
 ```java
 
@@ -148,37 +179,6 @@
 ```
 ![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorView/master/screenshot004.gif)
 
-
-使用示例
-```java
-@Override
-    protected void onCreate(Bundle savedInstanceState) {
-    //...
-    IndicatorView indicator = (IndicatorView) findViewById(R.id.main2_indicator);
-    IndicatorView indicator1 = (IndicatorView) findViewById(R.id.main2_indicator1);
-
-    indicator.setIndicatorColor(new int[]{
-            getResources().getColor(R.color.color_1),
-            getResources().getColor(R.color.color_2),
-            getResources().getColor(R.color.color_3),
-            getResources().getColor(R.color.color_4),
-            getResources().getColor(R.color.color_5)
-    });
-    //在进行指示点切换过程中不改变线段颜色
-    indicator.changeLineColorWhileSwitch(false);
-
-    indicator1.setIndicatorColor(0, getResources().getColor(R.color.color_1));
-    indicator1.setIndicatorColor(indicator2.getDotCount() - 1, getResources().getColor(R.color.yellow));
-    indicator1.setIndicatorColor(indicator2.getDotCount() / 2, getResources().getColor(R.color.color_5));
-
-    //...
-    }
-```
-
-![](https://raw.githubusercontent.com/DuanJiaNing/IndicatorView/master/screenshot003.gif)
-
-
-- v 1.4 2017-05-24：适配 API 11 ，修复 match_parent 时绘制线段和小圆点顺序不一致（纵向时的从上往下和从下往上）导致的错位问题，同时修复 match_parent 模式下，不在可点击范围内点击时指示点依然有触摸回馈的错误。
 
 #### 七.未来的开发计划
 - [X] 添加**纵向视图**支持
